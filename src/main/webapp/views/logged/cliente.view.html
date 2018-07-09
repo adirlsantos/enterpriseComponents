@@ -1,0 +1,585 @@
+<div class="container"> 
+  <h3>Cliente</h3> 
+  <div ng-hide="Cliente.inserting || Cliente.editing" class="component-holder ng-binding ng-scope" data-component="crn-datasource-filter-complex" id="crn-datasource-filter-complex-863312"> 
+    <fieldset> 
+      <div data-component="crn-enterprise-date" class="col-md-4"> 
+        <div class="form-group"> 
+          <label for="textinput-filter" class="">{{"template.crud.search" | translate}} Data Inicial</label> 
+          <cron-date options="" ng-model="vars.dataInicial" style="width: 100%;" mask-placeholder="" cronapp-filter="nascimento" cronapp-filter-operator=">=" cronapp-filter-caseinsensitive="false" cronapp-filter-autopost="false" crn-datasource="Cliente" class="form-control" value="" placeholder="Data Inical"> 
+            <cron-options> 
+              <cron-type>
+                 date 
+              </cron-type> 
+              <cron-format></cron-format> 
+              <cron-time-format></cron-time-format> 
+              <cron-week-number></cron-week-number> 
+              <cron-date-input></cron-date-input> 
+              <cron-footer></cron-footer> 
+              <cron-animation></cron-animation> 
+            </cron-options> 
+          </cron-date> 
+        </div> 
+      </div> 
+      <div data-component="crn-enterprise-date" class="col-md-4"> 
+        <div class="form-group"> 
+          <label for="textinput-filter" class="">{{"template.crud.search" | translate}} Data Final</label> 
+          <cron-date ng-model="vars.dataFinal" style="width: 100%;" mask-placeholder="" cronapp-filter="nascimento" cronapp-filter-operator="<=" cronapp-filter-caseinsensitive="false" cronapp-filter-autopost="false" crn-datasource="Cliente" class="form-control" value="" placeholder="Data Final"> 
+            <cron-options> 
+              <cron-type>
+                 date 
+              </cron-type> 
+              <cron-format></cron-format> 
+              <cron-time-format></cron-time-format> 
+              <cron-week-number></cron-week-number> 
+              <cron-date-input></cron-date-input> 
+              <cron-footer></cron-footer> 
+              <cron-animation></cron-animation> 
+            </cron-options> 
+          </cron-date> 
+        </div> 
+      </div> 
+      <div data-component="crn-button-filter" class="col-md-4" crn-datasource="Cliente"> 
+        <button class="btn btn-default component-holder" data-component="crn-button-filter" cronapp-filter="" cronapp-filter-caseinsensitive="false" type="submit" ng-click="" xattr-size="" xattr-fullsize="" xattr-theme="btn-default"> <i class="glyphicon glyphicon-search"></i> <span>{{"template.crud.search" | translate}}</span> </button> 
+      </div> 
+    </fieldset> 
+  </div> 
+  <div data-component="crn-button" id="crn-button-564202" class=""> 
+    <button class="btn btn-primary" type="submit" onclick="" data-component="crn-button" ng-click="Cliente.startInserting()" ng-hide="Cliente.inserting || Cliente.editing"><i class="fa fa-user"></i> <span class="">{{"template.crud.new" | translate}}</span></button> 
+  </div> 
+  <!-- fim div row para pesquisa --> 
+  <!--</div>--> 
+  <datasource filter="" name="Cliente" entity="api/cronapi/crud/app.entity.Cliente" keys="id" rows-per-page="100" delete-message="Deseja remover?" class=""></datasource> 
+  <div class="component-holder" data-component="crn-grid" id="crn-grid-Cliente"> 
+    <div crn-datasource="Cliente" class="" ng-hide="Cliente.editing || Cliente.inserting"> 
+      <table class="table  table-bordered table-hover table-striped"> 
+        <thead> 
+          <tr class="table-header"> 
+            <th class=""> 
+              <div class="">
+                 Nome 
+              </div> </th> 
+            <th class=""> 
+              <div class="">
+                 Nascimento 
+              </div> </th> 
+            <th class=""> 
+              <div class="">
+                 Atividade 
+              </div> </th> 
+            <th class=""> 
+              <div class="">
+                 Tipo 
+              </div> </th> 
+            <th class=""> 
+              <div class="">
+                 Estado 
+              </div> </th> 
+            <th class=""> 
+              <div class="">
+                 Município 
+              </div> </th> 
+            <th class=""> 
+              <div class="">
+                 {{"template.crud.actions" | translate}} 
+              </div> </th> 
+          </tr> 
+        </thead> 
+        <tbody> 
+          <tr class="table-content" ng-repeat="rowData in datasource.data"> 
+            <td class=""> 
+              <div class="">
+                 {{rowData.nome }} 
+              </div> </td> 
+            <td class=""> 
+              <div class="">
+                 {{rowData.nascimento | mask:'date'}} 
+              </div> </td> 
+            <td class=""> 
+              <div class="">
+                 {{rowData.ramoAtividade }} 
+              </div> </td> 
+            <td class=""> 
+              <div class="">
+                 {{rowData.tipo }} 
+              </div> </td> 
+            <td class=""> 
+              <div class="">
+                 {{rowData.estado.nome }} 
+              </div> </td> 
+            <td class=""> 
+              <div class="">
+                 {{rowData.municipio.nome }} 
+              </div> </td> 
+            <td class=""> 
+              <div class=""> 
+                <button class="btn btn-default btn-sm" data-component="crn-button" type="submit" ng-click="datasource.startEditing(rowData)"><i class="fa fa-edit"></i></button> 
+                <button class="btn btn-default btn-sm" data-component="crn-button" type="submit" ng-click="datasource.remove(rowData)"><i class="fa fa-times"></i></button> 
+              </div> </td> 
+          </tr> 
+        </tbody> 
+      </table> 
+      <div class="table-footer-controls"> 
+        <button class="btn btn-default btn-block btn-clicked" data-component="crn-button" ng-show="datasource.hasNextPage()" ng-click="datasource.nextPage()">{{"template.crud.load_more" | translate}}...</button> 
+      </div> 
+    </div> 
+  </div> 
+  <div data-component="crn-form" id="crn-form-form-Cliente"> 
+    <div class="form" ng-show="Cliente.editing || Cliente.inserting"> 
+      <form crn-datasource="Cliente" class=""> 
+        <div class="tool-bar" ng-hide="datasource.editing || datasource.inserting"> 
+          <button class="btn btn-primary" data-component="crn-button" ng-click="datasource.startInserting()"><i class="glyphicon glyphicon-plus-sign"></i></button> 
+          <button class="btn btn-success" data-component="crn-button" ng-click="datasource.startEditing()"><i class="glyphicon glyphicon-edit"></i></button> 
+          <button class="btn btn-primary" data-component="crn-button" ng-disabled="!datasource.hasPrevious()" ng-click="datasource.previous()"><i class="glyphicon glyphicon-chevron-left"></i></button> 
+          <button class="btn btn-primary" data-component="crn-button" ng-disabled="!datasource.hasNext()" ng-click="datasource.next()"><i class="glyphicon glyphicon-chevron-right"></i></button> 
+          <button class="btn btn-primary" data-component="crn-button" ng-click="datasource.remove()"><i class="glyphicon glyphicon-trash"></i></button> 
+        </div> 
+        <div class="active-bar" ng-hide="!datasource.editing &amp;&amp; !datasource.inserting"> 
+          <button class="btn btn-success" data-component="crn-button" ng-click="datasource.post()"><i class="glyphicon glyphicon-ok"></i></button> 
+          <button class="btn btn-danger" data-component="crn-button" ng-click="datasource.cancel()"><i class="glyphicon glyphicon-remove"></i></button> 
+        </div> 
+        <br> 
+        <fieldset ng-disabled="!datasource.editing &amp;&amp; !datasource.inserting"> 
+          <datasource name="Ramoatividade" entity="api/cronapi/crud/app.entity.RamoAtividade" keys="id" dependent-by="{{Cliente}}"></datasource> 
+          <datasource name="Municipio" entity="api/cronapi/crud/app.entity.Municipio" keys="id" dependent-by="{{Cliente}}"></datasource> 
+          <div class="row"> 
+            <div data-component="crn-textinput" id="crn-textinput-component-nome" class="col-md-12"> 
+              <div class="form-group"> 
+                <label for="textinput-nome" class="">Nome</label> 
+                <input type="text" ng-model="Cliente.active.nome" class="form-control" id="textinput-nome" placeholder="Nome" mask="" mask-placeholder="" ng-required="false"> 
+              </div> 
+            </div> 
+          </div> 
+          <div class="row"> 
+            <div data-component="crn-enterprise-date" id="crn-textinput-cadastro" class="col-md-3"> 
+              <div class="form-group"> 
+                <label for="textinput-cadastro" class="">Cadastro</label> 
+                <cron-date options="" ng-model="Cliente.active.cadastro" class="form-control" id="textinput-cadastro" ng-required="false" style="width: 100%;">
+                  <cron-options>
+                    <cron-type>
+                      datetime
+                    </cron-type>
+                    <cron-format></cron-format>
+                    <cron-time-format></cron-time-format>
+                    <cron-week-number></cron-week-number>
+                    <cron-date-input>
+                      true
+                    </cron-date-input>
+                    <cron-footer>
+                      Hoje - #: kendo.toString(data, 'd') #
+                    </cron-footer>
+                    <cron-animation>
+                      { "close": { "effects": "fadeOut zoom:out", "duration": 300 }, "open": { "effects": "fadeIn zoom:in", "duration": 300 } }
+                    </cron-animation>
+                    <cron-start></cron-start>
+                  </cron-options>
+                </cron-date> 
+              </div> 
+            </div> 
+            <div data-component="crn-enterprise-date" id="crn-textinput-nascimento" class="col-md-3"> 
+              <div class="form-group"> 
+                <label for="textinput-nascimento" class="">Nascimento</label> 
+                <cron-date options="" ng-model="Cliente.active.nascimento" class="form-control" id="textinput-nascimento" placeholder="Nascimento" ng-required="false" style="width: 100%;"> 
+                  <cron-options> 
+                    <cron-type>
+                       date 
+                    </cron-type> 
+                    <cron-format>
+                       MMMM/YYYY 
+                    </cron-format> 
+                    <cron-time-format>
+                       MMMM/YYYY 
+                    </cron-time-format> 
+                    <cron-week-number></cron-week-number> 
+                    <cron-date-input></cron-date-input> 
+                    <cron-footer></cron-footer> 
+                    <cron-animation></cron-animation> 
+                    <cron-start>
+                       year 
+                    </cron-start> 
+                  </cron-options> 
+                </cron-date> 
+              </div> 
+            </div> 
+            <div data-component="crn-enterprise-date" id="crn-textinput-horaNascimento" class="col-md-3"> 
+              <div class="form-group"> 
+                <label for="textinput-horaNascimento" class="">Hora Nascimento</label> 
+                <cron-date options="" ng-model="Cliente.active.horaNascimento" class="form-control" id="textinput-horaNascimento" placeholder="horaNascimento" ng-required="false" style="width: 100%;"> 
+                  <cron-options> 
+                    <cron-type>
+                       time 
+                    </cron-type> 
+                    <cron-format></cron-format> 
+                    <cron-time-format></cron-time-format> 
+                    <cron-week-number></cron-week-number> 
+                    <cron-date-input></cron-date-input> 
+                    <cron-footer></cron-footer> 
+                    <cron-animation></cron-animation> 
+                  </cron-options> 
+                </cron-date> 
+              </div> 
+            </div> 
+            <div data-component="crn-slider" id="crn-textinput-satisfacao" class="col-md-3"> 
+              <div class="form-group"> 
+                <label for="satisfacao" class="">Satisfação</label> 
+                <cron-slider options="" ng-required="false" id="satisfacao" ng-model="vars.teste" class="crn-select form-control" style=""> 
+                  <cron-options> 
+                    <cron-increase-button-title>
+                       Incrementar 
+                    </cron-increase-button-title> 
+                    <cron-decrease-button-title>
+                       Decrementar 
+                    </cron-decrease-button-title> 
+                    <cron-min>
+                       1 
+                    </cron-min> 
+                    <cron-max>
+                       10 
+                    </cron-max> 
+                    <cron-small-step>
+                       1 
+                    </cron-small-step> 
+                    <cron-large-step>
+                       1 
+                    </cron-large-step> 
+                    <cron-drag-handle-title>
+                       Slider 
+                    </cron-drag-handle-title> 
+                  </cron-options> 
+                </cron-slider> 
+              </div> 
+            </div> 
+          </div> 
+          <div class="row"> 
+            <div class="component-holder ng-binding ng-scope  col-md-3" data-component="crn-enterprise-combobox" id="crn-combobox-tipo"> 
+              <div class="form-group"> 
+                <label for="tipocliente" class="">Tipo</label> 
+                <cron-select options="" ng-required="false" id="tipocliente" ng-model="Cliente.active.tipo" class="crn-select form-control" style=""> 
+                  <cron-options> 
+                    <cron-header-template>
+                       &lt;h3&gt;Relação de Tipos&lt;/h3&gt; 
+                    </cron-header-template> 
+                    <cron-template></cron-template> 
+                    <cron-footer-template></cron-footer-template> 
+                    <cron-placeholder>
+                       Tipos 
+                    </cron-placeholder> 
+                    <cron-data-source></cron-data-source> 
+                    <cron-filter>
+                       contains 
+                    </cron-filter> 
+                    <cron-data-text-field></cron-data-text-field> 
+                    <cron-data-value-field></cron-data-value-field> 
+                    <cron-option-label></cron-option-label> 
+                    <cron-dynamic>
+                       false 
+                    </cron-dynamic> 
+                    <cron-value-primitive></cron-value-primitive> 
+                    <cron-static-data-source> 
+                      <cron-key>
+                         1 
+                      </cron-key> 
+                      <cron-value>
+                         Valor 1 
+                      </cron-value> 
+                    </cron-static-data-source> 
+                    <cron-static-data-source> 
+                      <cron-key>
+                         2 
+                      </cron-key> 
+                      <cron-value>
+                         Valor 2 
+                      </cron-value> 
+                    </cron-static-data-source> 
+                    <cron-static-data-source> 
+                      <cron-key>
+                         3 
+                      </cron-key> 
+                      <cron-value>
+                         Valor 3 
+                      </cron-value> 
+                    </cron-static-data-source> 
+                  </cron-options> 
+                </cron-select> 
+              </div> 
+            </div> 
+            <div class="component-holder ng-binding ng-scope  col-md-3" data-component="crn-enterprise-dynamic-autocomplete" id="crn-enterprise-dynamic-autocomplete-824054"> 
+              <div class="form-group"> 
+                <label for="vars.combobox4880">Ramo Atividade</label> 
+                <cron-auto-complete options="" ng-required="false" id="combo-ramoAtividade" ng-model="Cliente.active.ramoAtividade" class="crn-select form-control" style=""> 
+                  <cron-options> 
+                    <cron-header-template></cron-header-template> 
+                    <cron-template></cron-template> 
+                    <cron-footer-template></cron-footer-template> 
+                    <cron-placeholder>
+                       Ramo atividade 
+                    </cron-placeholder> 
+                    <cron-data-source> 
+                      <cron-id>
+                         h85cntnc0j79 
+                      </cron-id> 
+                      <cron-param-values></cron-param-values> 
+                      <cron-entity-full-name>
+                         app.entity.RamoAtividade 
+                      </cron-entity-full-name> 
+                      <cron-schema-fields> 
+                        <cron-name>
+                           id 
+                        </cron-name> 
+                        <cron-type>
+                           String 
+                        </cron-type> 
+                        <cron-nullable>
+                           false 
+                        </cron-nullable> 
+                        <cron-key>
+                           true 
+                        </cron-key> 
+                      </cron-schema-fields> 
+                      <cron-schema-fields> 
+                        <cron-name>
+                           nome 
+                        </cron-name> 
+                        <cron-type>
+                           String 
+                        </cron-type> 
+                        <cron-nullable>
+                           true 
+                        </cron-nullable> 
+                        <cron-key>
+                           false 
+                        </cron-key> 
+                      </cron-schema-fields> 
+                    </cron-data-source> 
+                    <cron-filter>
+                       contains 
+                    </cron-filter> 
+                    <cron-data-text-field>
+                       nome 
+                    </cron-data-text-field> 
+                    <cron-data-value-field>
+                       nome 
+                    </cron-data-value-field> 
+                    <cron-option-label></cron-option-label> 
+                    <cron-dynamic>
+                       true 
+                    </cron-dynamic> 
+                    <cron-value-primitive></cron-value-primitive> 
+                    <cron-cascade-from></cron-cascade-from> 
+                    <cron-cascade-from-field></cron-cascade-from-field> 
+                  </cron-options> 
+                </cron-auto-complete> 
+              </div> 
+            </div> 
+            <div class="component-holder ng-binding ng-scope  col-md-3" data-component="crn-enterprise-dynamic-combobox" id="crn-enterprise-dynamic-combobox-774916"> 
+              <div class="form-group"> 
+                <label for="combo-estado">Estado</label> 
+                <cron-dynamic-select options="" ng-required="false" id="combo-estado" ng-model="Cliente.active.estado" class="crn-select form-control" style="">
+                  <cron-options>
+                    <cron-header-template>
+                      &lt;h3&gt;Lista&lt;/h3&gt;
+                    </cron-header-template>
+                    <cron-template>
+                      Estado: #: nome #
+                    </cron-template>
+                    <cron-footer-template></cron-footer-template>
+                    <cron-placeholder>
+                      Selecione um Item...
+                    </cron-placeholder>
+                    <cron-data-source>
+                      <cron-id>
+                        qec3xixpe0xk
+                      </cron-id>
+                      <cron-param-values></cron-param-values>
+                      <cron-entity-full-name>
+                        app.entity.Estado
+                      </cron-entity-full-name>
+                      <cron-schema-fields>
+                        <cron-name>
+                          id
+                        </cron-name>
+                        <cron-type>
+                          String
+                        </cron-type>
+                        <cron-nullable>
+                          false
+                        </cron-nullable>
+                        <cron-key>
+                          true
+                        </cron-key>
+                      </cron-schema-fields>
+                      <cron-schema-fields>
+                        <cron-name>
+                          nome
+                        </cron-name>
+                        <cron-type>
+                          String
+                        </cron-type>
+                        <cron-nullable>
+                          true
+                        </cron-nullable>
+                        <cron-key>
+                          false
+                        </cron-key>
+                      </cron-schema-fields>
+                    </cron-data-source>
+                    <cron-filter>
+                      contains
+                    </cron-filter>
+                    <cron-data-text-field>
+                      nome
+                    </cron-data-text-field>
+                    <cron-data-value-field>
+                      id
+                    </cron-data-value-field>
+                    <cron-option-label>
+                      Selecione um Estado
+                    </cron-option-label>
+                    <cron-dynamic>
+                      true
+                    </cron-dynamic>
+                    <cron-value-primitive></cron-value-primitive>
+                    <cron-cascade-from></cron-cascade-from>
+                    <cron-cascade-from-field></cron-cascade-from-field>
+                  </cron-options>
+                </cron-dynamic-select> 
+              </div> 
+            </div> 
+            <div class="component-holder ng-binding ng-scope  col-md-3" data-component="crn-enterprise-dynamic-combobox" id="crn-enterprise-dynamic-combobox-227181"> 
+              <div class="form-group"> 
+                <label for="">{{Cliente.active.municipio}}</label> 
+                <cron-dynamic-select options="" ng-required="false" id="combo-municipio" ng-model="Cliente.active.municipio" class="crn-select form-control" style=""> 
+                  <cron-options> 
+                    <cron-header-template>
+                       &lt;h3&gt;Lista&lt;/h3&gt; 
+                    </cron-header-template> 
+                    <cron-template></cron-template> 
+                    <cron-footer-template></cron-footer-template> 
+                    <cron-placeholder>
+                       Selecione um Item... 
+                    </cron-placeholder> 
+                    <cron-data-source> 
+                      <cron-id>
+                         h7qzj5dj4a46 
+                      </cron-id> 
+                      <cron-param-values></cron-param-values> 
+                      <cron-entity-full-name>
+                         app.entity.Municipio 
+                      </cron-entity-full-name> 
+                      <cron-schema-fields> 
+                        <cron-name>
+                           estado 
+                        </cron-name> 
+                        <cron-type>
+                           String 
+                        </cron-type> 
+                        <cron-nullable>
+                           true 
+                        </cron-nullable> 
+                        <cron-key>
+                           false 
+                        </cron-key> 
+                      </cron-schema-fields> 
+                      <cron-schema-fields> 
+                        <cron-name>
+                           id 
+                        </cron-name> 
+                        <cron-type>
+                           String 
+                        </cron-type> 
+                        <cron-nullable>
+                           false 
+                        </cron-nullable> 
+                        <cron-key>
+                           true 
+                        </cron-key> 
+                      </cron-schema-fields> 
+                      <cron-schema-fields> 
+                        <cron-name>
+                           nome 
+                        </cron-name> 
+                        <cron-type>
+                           String 
+                        </cron-type> 
+                        <cron-nullable>
+                           true 
+                        </cron-nullable> 
+                        <cron-key>
+                           false 
+                        </cron-key> 
+                      </cron-schema-fields> 
+                    </cron-data-source> 
+                    <cron-filter>
+                       contains 
+                    </cron-filter> 
+                    <cron-data-text-field>
+                       nome 
+                    </cron-data-text-field> 
+                    <cron-data-value-field>
+                       id 
+                    </cron-data-value-field> 
+                    <cron-option-label>
+                       Selecione um Municipio 
+                    </cron-option-label> 
+                    <cron-dynamic>
+                       true 
+                    </cron-dynamic> 
+                    <cron-value-primitive></cron-value-primitive> 
+                    <cron-cascade-from>
+                       combo-estado 
+                    </cron-cascade-from> 
+                    <cron-cascade-from-field>
+                       estado 
+                    </cron-cascade-from-field> 
+                  </cron-options> 
+                </cron-dynamic-select> 
+              </div> 
+            </div> 
+          </div> 
+          <div class="row"> 
+            <div class="component-holder ng-binding ng-scope col-md-12" data-component="crn-checkbox" id="crn-checkbox-57741"> 
+              <div class="checkbox form-group"> 
+                <input type="checkbox" id="vars.checkbox1287" ng-model="Cliente.active.revendodor" class="k-checkbox"> 
+                <label class="k-checkbox-label" for="vars.checkbox1287">Cliente é um revendedor?</label> 
+              </div> 
+            </div> 
+            <div data-component="crn-switch" id="crn-textinput-ativo" class="col-md-2"> 
+              <div class="form-group"> 
+                <label for="textinput-ativo" class="">Cliente Ativo</label> 
+                <cron-switch options="" ng-model="Cliente.active.ativo" class="form-control" id="textinput-ativo" ng-required="false" style=""> 
+                  <cron-options> 
+                    <cron-on-label>
+                       SIM 
+                    </cron-on-label> 
+                    <cron-off-label>
+                       NAO 
+                    </cron-off-label> 
+                  </cron-options> 
+                </cron-switch> 
+              </div> 
+            </div> 
+             
+            
+            <div class="form-group component-holder col-md-12" ng-model="Cliente.active.classificacao" data-component="crn-group" id="crn-group-816131"> 
+              <div class="radio" data-component="crn-groupOption"> 
+                <input type="radio" name="groupOption" id="radio1" class="k-radio"> 
+                <label class="k-radio-label" crn-value="" value="1" for="radio1"><span class="" data-container="true">Pequeno Porte</span></label> 
+              </div> 
+              <div class="radio" data-component="crn-groupOption"> 
+                <input type="radio" name="groupOption" id="radio2" class="k-radio"> 
+                <label class="k-radio-label" crn-value="" value="2" for="radio2"><span class="" data-container="true">Médio Porte</span></label> 
+              </div> 
+              <div class="radio active" data-component="crn-groupOption"> 
+                <input type="radio" name="groupOption" id="radio3" class="k-radio"> 
+                <label class="k-radio-label" crn-value="" value="3" for="radio3"><span class="" data-container="true">Grande Porte</span></label> 
+              </div> 
+            </div> 
+          </div> 
+        </fieldset> 
+      </form> 
+      <form> 
+        <fieldset> 
+        </fieldset> 
+      </form> 
+    </div> 
+  </div> 
+</div>

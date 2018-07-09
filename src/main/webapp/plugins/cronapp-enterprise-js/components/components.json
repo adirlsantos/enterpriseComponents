@@ -1,0 +1,405 @@
+{
+  "name": "cronos-components",
+  "version": "1.0.0",
+  "components": [    
+    {
+      "name": "crn-enterprise-date",
+      "text_pt_BR": "Data",
+      "text_en_US": "Date",
+      "class": "adjust-icon mdi mdi-calendar-multiple",
+      "designTimeHTML": "<input type='date'/>",
+      "designTimeSelector": "cron-date",
+      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-date.template.html",
+      "properties": {
+        "onchange": {
+          "removable": true,
+          "type": "event"
+        },
+        "ng-model": {
+          "onSave": "javascript:function() { var result = arguments[0]; if (result.indexOf('.') == -1 && result.trim().length > 0 ) { result = 'vars.'+result;  }  return result; }",
+          "onDisplay": "javascript:function() { return arguments[0].replace('vars.',''); }"
+        }
+      },
+      "childrenProperties": [
+        {
+          "name": "options",
+          "selector": "cron-date",
+          "displayName_pt_BR": "Configuração",
+          "displayName_en_US": "Configuration"
+        }
+      ],
+      "groupedChildren": [
+        {
+          "text_pt_BR": "Rótulo",
+          "text_en_US": "Label",
+          "selector": "label"
+        },
+        {
+          "text_pt_BR": "Campo",
+          "text_en_US": "Field",
+          "selector": "cron-date"
+        }
+      ]
+    },
+    {
+      "name": "crn-enterprise-combobox",
+      "text_pt_BR": "Caixa de seleção",
+      "text_en_US": "Combobox",
+      "class": "adjust-icon mdi mdi-equal-box",
+      "designTimeHTML": "<select></select>",
+      "designTimeSelector": "cron-select",
+      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-combobox.template.html",
+      "properties": {
+        "onchange": {
+          "removable": true,
+          "type": "event"
+        },
+        "ng-model":{
+          "displayName_pt_BR": "Campo",
+          "displayName_en_US": "Field",
+          "onSave": "javascript:function() { var result = arguments[0]; if (result.indexOf('.') == -1 && result.trim().length > 0 ) { result = 'vars.'+result;  }  return result; }",
+          "onDisplay": "javascript:function() { return arguments[0].replace('vars.',''); }"
+        }
+      },
+      "childrenProperties": [
+        {
+          "name": "options",
+          "selector": "cron-select",
+          "displayName_pt_BR": "Configuração",
+          "displayName_en_US": "Configuration"
+        }
+      ],
+      "groupedChildren": [
+        {
+          "text_pt_BR": "Rótulo",
+          "text_en_US": "Label",
+          "selector": "label"
+        },
+        {
+          "text_pt_BR": "Campo",
+          "text_en_US": "Field",
+          "selector": "cron-select"
+        }
+      ]
+    },
+    {
+      "name": "crn-enterprise-dynamic-combobox",
+      "text_pt_BR": "Caixa de seleção dinâmica",
+      "text_en_US": "Dynamic Combobox",
+      "class": "adjust-icon mdi mdi-nutrition",
+      "designTimeHTML": "<select></select>",
+      "designTimeSelector": "cron-dynamic-select",
+      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-dynamic-combobox.template.html",
+      "properties": {
+        "onchange": {
+          "removable": true,
+          "type": "event"
+        },
+        "ng-model":{
+          "displayName_pt_BR": "Campo",
+          "displayName_en_US": "Field",
+          "onSave": "javascript:function() { var result = arguments[0]; if (result.indexOf('.') == -1 && result.trim().length > 0 ) { result = 'vars.'+result;  }  return result; }",
+          "onDisplay": "javascript:function() { return arguments[0].replace('vars.',''); }"
+        }
+      },
+      "childrenProperties": [
+        {
+          "name": "options",
+          "selector": "cron-dynamic-select",
+          "displayName_pt_BR": "Configuração",
+          "displayName_en_US": "Configuration"
+        }
+      ],
+      "groupedChildren": [
+        {
+          "text_pt_BR": "Rótulo",
+          "text_en_US": "Label",
+          "selector": "label"
+        },
+        {
+          "text_pt_BR": "Campo",
+          "text_en_US": "Field",
+          "selector": "cron-dynamic-select"
+        }
+      ]
+    },
+    {
+      "name": "crn-enterprise-combobox-multiple",
+      "text_pt_BR": "Caixa de seleção multipla",
+      "text_en_US": "Combobox Multi Select",
+      "class": "adjust-icon mdi mdi-nutrition",
+      "designTimeHTML": "<select></select>",
+      "designTimeSelector": "cron-multi-select",
+      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-combobox-multiple.template.html",
+      "properties": {
+        "onchange": {
+          "removable": true,
+          "type": "event"
+        },
+        "ng-model":{
+          "displayName_pt_BR": "Campo",
+          "displayName_en_US": "Field",
+          "onSave": "javascript:function() { var result = arguments[0]; if (result.indexOf('.') == -1 && result.trim().length > 0 ) { result = 'vars.'+result;  }  return result; }",
+          "onDisplay": "javascript:function() { return arguments[0].replace('vars.',''); }"
+        }
+      },
+      "childrenProperties": [
+        {
+          "name": "options",
+          "selector": "cron-multi-select",
+          "displayName_pt_BR": "Configuração",
+          "displayName_en_US": "Configuration"
+        }
+      ],
+      "groupedChildren": [
+        {
+          "text_pt_BR": "Rótulo",
+          "text_en_US": "Label",
+          "selector": "label"
+        },
+        {
+          "text_pt_BR": "Campo",
+          "text_en_US": "Field",
+          "selector": "cron-multi-select"
+        }
+      ]
+    },
+    {
+      "name": "crn-enterprise-autocomplete",
+      "text_pt_BR": "Auto Completar",
+      "text_en_US": "Auto Complete",
+      "class": "adjust-icon mdi mdi-receipt",
+      "designTimeHTML": "<select></select>",
+      "designTimeSelector": "cron-auto-complete",
+      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-autocomplete.template.html",
+      "properties": {
+        "onchange": {
+          "removable": true,
+          "type": "event"
+        },
+        "ng-model":{
+          "displayName_pt_BR": "Campo",
+          "displayName_en_US": "Field",
+          "onSave": "javascript:function() { var result = arguments[0]; if (result.indexOf('.') == -1 && result.trim().length > 0 ) { result = 'vars.'+result;  }  return result; }",
+          "onDisplay": "javascript:function() { return arguments[0].replace('vars.',''); }"
+        }
+      },
+      "childrenProperties": [
+        {
+          "name": "options",
+          "selector": "cron-auto-complete",
+          "displayName_pt_BR": "Configuração",
+          "displayName_en_US": "Configuration"
+        }
+      ],
+      "groupedChildren": [
+        {
+          "text_pt_BR": "Rótulo",
+          "text_en_US": "Label",
+          "selector": "label"
+        },
+        {
+          "text_pt_BR": "Campo",
+          "text_en_US": "Field",
+          "selector": "cron-auto-complete"
+        }
+      ]
+    },
+    {
+      "name": "crn-enterprise-dynamic-autocomplete",
+      "text_pt_BR": "Auto Completar Dinâmico",
+      "text_en_US": "Dynamic Auto Complete",
+      "class": "adjust-icon mdi mdi-receipt",
+      "designTimeHTML": "<select></select>",
+      "designTimeSelector": "cron-auto-complete",      
+      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-dynamic-autocomplete.template.html",
+      "properties": {
+        "onchange": {
+          "removable": true,
+          "type": "event"
+        },
+        "ng-model":{
+          "displayName_pt_BR": "Campo",
+          "displayName_en_US": "Field",
+          "onSave": "javascript:function() { var result = arguments[0]; if (result.indexOf('.') == -1 && result.trim().length > 0 ) { result = 'vars.'+result;  }  return result; }",
+          "onDisplay": "javascript:function() { return arguments[0].replace('vars.',''); }"
+        }
+      },
+      "childrenProperties": [
+        {
+          "name": "options",
+          "selector": "cron-auto-complete",
+          "displayName_pt_BR": "Configuração",
+          "displayName_en_US": "Configuration"
+        }
+      ],
+      "groupedChildren": [
+        {
+          "text_pt_BR": "Rótulo",
+          "text_en_US": "Label",
+          "selector": "label"
+        },
+        {
+          "text_pt_BR": "Campo",
+          "text_en_US": "Field",
+          "selector": "cron-auto-complete"
+        }
+      ]
+    },
+    {
+      "name": "crn-slider",
+      "text_pt_BR": "Slider",
+      "text_en_US": "Slider",
+      "class": "adjust-icon mdi mdi-server-network",
+      "designTimeHTML": "<input type='range' min='1' max='10' value='5' class='slider'/>",
+      "designTimeSelector": "cron-slider",      
+      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-slider.template.html",
+      "properties": {
+        "onchange": {
+          "removable": true,
+          "type": "event"
+        },
+        "ng-model":{
+          "displayName_pt_BR": "Campo",
+          "displayName_en_US": "Field",
+          "onSave": "javascript:function() { var result = arguments[0]; if (result.indexOf('.') == -1 && result.trim().length > 0 ) { result = 'vars.'+result;  }  return result; }",
+          "onDisplay": "javascript:function() { return arguments[0].replace('vars.',''); }"
+        }
+      },
+      "childrenProperties": [
+        {
+          "name": "options",
+          "selector": "cron-slider",
+          "displayName_pt_BR": "Configuração",
+          "displayName_en_US": "Configuration"
+        }
+      ],
+      "groupedChildren": [
+        {
+          "text_pt_BR": "Rótulo",
+          "text_en_US": "Label",
+          "selector": "label"
+        },
+        {
+          "text_pt_BR": "Campo",
+          "text_en_US": "Field",
+          "selector": "cron-slider"
+        }
+      ]
+    },
+    {
+      "name": "crn-switch",
+      "text_pt_BR": "Switch",
+      "text_en_US": "Switch",
+      "class": "adjust-icon mdi mdi-toggle-switch-off",
+      "designTimeHTML": "<label class='switch'><input type='checkbox'><span class='slider'></span></label>",
+      "designTimeSelector": "cron-switch",
+      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-switch.template.html",
+      "properties": {
+        "onchange": {
+          "removable": true,
+          "type": "event"
+        },
+        "ng-model":{
+          "displayName_pt_BR": "Campo",
+          "displayName_en_US": "Field",
+          "onSave": "javascript:function() { var result = arguments[0]; if (result.indexOf('.') == -1 && result.trim().length > 0 ) { result = 'vars.'+result;  }  return result; }",
+          "onDisplay": "javascript:function() { return arguments[0].replace('vars.',''); }"
+        }
+      },
+      "childrenProperties": [
+        {
+          "name": "options",
+          "selector": "cron-switch",
+          "displayName_pt_BR": "Configuração",
+          "displayName_en_US": "Configuration"
+        }
+      ],
+      "groupedChildren": [
+        {
+          "text_pt_BR": "Rótulo",
+          "text_en_US": "Label",
+          "selector": "label"
+        },
+        {
+          "text_pt_BR": "Campo",
+          "text_en_US": "Field",
+          "selector": "cron-switch"
+        }
+      ]
+    },
+    {
+      "name": "crn-checkbox",
+      "text_pt_BR": "Checkbox",
+      "text_en_US": "Checkbox",
+      "class": "adjust-icon mdi mdi-checkbox-marked-outline",
+      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-checkbox.template.html",
+      "properties": {
+        "onchange": {
+          "removable": true,
+          "type": "event"
+        },
+        "ng-model":{
+          "displayName_pt_BR": "Campo",
+          "displayName_en_US": "Field",
+          "onSave": "javascript:function() { var result = arguments[0]; if (result.indexOf('.') == -1 && result.trim().length > 0 ) { result = 'vars.'+result;  }  return result; }",
+          "onDisplay": "javascript:function() { return arguments[0].replace('vars.',''); }"
+        }
+      },
+      "groupedChildren": [
+        {
+          "text_pt_BR": "Rótulo",
+          "text_en_US": "Label",
+          "selector": "label"
+        },
+        {
+          "text_pt_BR": "Campo",
+          "text_en_US": "Field",
+          "selector": "input"
+        }
+      ]
+    },
+    {
+      "name": "crn-group",
+      "text_pt_BR": "Radio Group",
+      "text_en_US": "Radio Group",
+	    "forcedGroup":true,
+      "class": "adjust-icon mdi mdi-radiobox-marked",
+      "wrapper":false,
+      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-radio.template.html",
+      "properties": {
+        "ng-model": {
+          "onSave": "javascript:function() { var result = arguments[0]; if (result.indexOf('.') == -1 && result.trim().length > 0 ) { result = 'vars.'+result;  }  return result; }",
+          "onDisplay": "javascript:function() { return arguments[0].replace('vars.',''); }"
+        }
+      },
+      "handleRules": {
+        "canIncrement": true,
+        "rules": [
+          {
+            "sourceHTML": "<div class=\"radio\" data-component=\"crn-groupOption\">\n  <label class=\"k-radio-label\" crn-value=\"\" value=\"value${RANDOM}\"><span class=\"\" data-container=\"true\">New Value</span></label> \n <input type=\"radio\" name=\"groupOption\" id=\"optionsRadios${RANDOM}\" class=\"k-radio\" value=\"\">\n</div>",
+            "targetSelector": ":self"
+          }
+        ]
+      }
+    },
+    {
+      "name": "crn-groupOption",
+      "pallete":false,
+      "childrenProperties": [
+        {
+          "name": "value",
+          "selector": "label[value]",
+          "displayName_pt_BR": "Valor do campo",
+          "displayName_en_US": "Field value"
+        },
+        {
+          "name": "crn-view-value",
+          "selector": "span",
+          "displayName_pt_BR": "Valor de exibição",
+          "displayName_en_US": "Text value"
+        }
+      ]
+    }
+  ]
+}
