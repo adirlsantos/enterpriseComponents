@@ -17,8 +17,8 @@
           var options = app.kendoHelper.getConfigCombobox(select);
           
           var parent = element.parent();
-          $(parent).append('<input style="width: 100%;" class="cronAutoComplete" ng-model="' + attrs.ngModel + '"/>');
-          var $element = $(parent).find('input.cronAutoComplete');
+          $(parent).append('<input style="width: 100%;" class="cronSelect" ng-model="' + attrs.ngModel + '"/>');
+          var $element = $(parent).find('input.cronSelect');
         
           var combobox = $element.kendoComboBox(options).data('kendoComboBox');
           $(element).remove();
@@ -72,18 +72,22 @@
             console.log('DynamicComboBox invalid configuration! ' + err);
           }
           
-          $(element).empty();
           var options = app.kendoHelper.getConfigCombobox(select);
           if ((options) && (options.dataSource) && (options.dataSource.schema) && 
               (options.dataSource.schema.model) && (options.dataSource.schema.model.id)) {
             delete options.dataSource.schema.model.id;
           }
           
-          var combobox = $(element).kendoDropDownList(options).data('kendoDropDownList');
+          var parent = element.parent();
+          $(parent).append('<input style="width: 100%;" class="cronDynamicSelect" ng-model="' + attrs.ngModel + '"/>');
+          var $element = $(parent).find('input.cronDynamicSelect');
+          
+          var combobox = $element.kendoDropDownList(options).data('kendoDropDownList');
           var _scope = scope;
           var _ngModelCtrl = ngModelCtrl;
+          $(element).remove();
           
-          $(element).on('change', function (event) {
+          $element.on('change', function (event) {
             _scope.$apply(function () {
               _ngModelCtrl.$setViewValue(this.dataItem());
             }.bind(combobox));
@@ -98,7 +102,7 @@
               var result = '';
               
               if (value) {
-                if (!combobox.options.valuePrimitive) {
+                if (combobox.options.valuePrimitive == "false") {
                   if (value && value[select.dataValueField]) {
                     result = value[select.dataValueField];
                   }
@@ -119,9 +123,16 @@
              */
             ngModelCtrl.$parsers.push(function (value) {
               if (value) {
-                if (this.dataSource && this.dataSource.options && this.dataSource.options.schema && 
-                    this.dataSource.options.schema.model && this.dataSource.options.schema.model.fields) {
-                  return objectClone(value, this.dataSource.options.schema.model.fields);
+                if (combobox.options.valuePrimitive === "true") {  
+                  if (typeof value == 'string') {
+                    return value;
+                  } else if (value[select.dataValueField]) {
+                    return value[select.dataValueField];
+                  }
+                } else {
+                  try {
+                    return objectClone(value, this.dataSource.options.schema.model.fields);
+                  } catch(e){}
                 }
               }
   
@@ -180,13 +191,14 @@
   
             ngModelCtrl.$parsers.push(function (value) {
               if (value && Array.isArray(value)) {
-                if (this.dataSource && this.dataSource.options && this.dataSource.options.schema && 
-                    this.dataSource.options.schema.model && this.dataSource.options.schema.model.fields) {
+                if (this.dataSource) {
                   var result = [];
                   
-                  for (var item in value) {
-                    result.push(objectClone(value[item], this.dataSource.options.schema.model.fields));
-                  }
+                  try {
+                    for (var item in value) {
+                      result.push(objectClone(value[item], this.dataSource.options.schema.model.fields));
+                    }
+                  } catch (e){}
                   
                   return result;
                 }
@@ -267,15 +279,19 @@
 
   .directive('cronDate', ['$compile', '$translate', '$window', function ($compile, $translate, $window) {
     return {
-      restrict: 'E',
+      restrict: 'AE',
       require: '^ngModel',
       link: function (scope, element, attrs, ngModelCtrl) {
         var options = {};
         var cronDate = {};
         
         try {
-          var json = window.buildElementOptions(element);
-          cronDate = JSON.parse(json);
+          if (attrs.options)
+            cronDate =  JSON.parse(attrs.options);
+          else {
+            var json = window.buildElementOptions(element);
+            cronDate = JSON.parse(json);
+          }
           if (!cronDate.format) {
             cronDate.format = parseMaskType(cronDate.type, $translate)
           }
@@ -286,52 +302,83 @@
         
         var useUTC = options.type == 'date' || options.type == 'datetime' || options.type == 'time';
 
-        var parent = element.parent();
-        $(parent).append('<input style="width: 100%;" class="cronDate" ng-model="' + attrs.ngModel + '"/>');
-        var $element = $(parent).find('input.cronDate');
-        
-        $element.data("type", options.type);
-        $element.attr("type", "date");
+
+        var $element;
+        if (attrs.fromGrid) {
+          $element = $(element);
+        }
+        else {
+          var parent = element.parent();
+          var $input = $('<input style="width: 100%;" class="cronDate" ng-model="' + attrs.ngModel + '"/>');
+          $(parent).append($input);
+          $element = $(parent).find('input.cronDate');
+          $element.data("type", options.type);
+          $element.attr("type", "date");
+        }
         
         var datePicker = app.kendoHelper.buildKendoMomentPicker($element, options, scope, ngModelCtrl); 
         
-        if (ngModelCtrl) {
-          ngModelCtrl.$formatters.push(function (value) {
-            var selDate = null;
-            
-            if (value) {
-              var momentDate = null;
-
-              if (useUTC) {
-                momentDate = moment.utc(value);
-              } else {
-                momentDate = moment(value);
-              }
-
-              selDate = momentDate.format(options.momentFormat);
+        if (attrs.fromGrid) {
+          var unmaskedvalue = function() {
+            var momentDate = null;
+           
+            var valueDate =  $(this).val();
+            if ($(this).data('initial-date')) {
+              valueDate = $(this).data('initial-date');
+              $(this).data('initial-date', null);
             }
             
-            datePicker.value(selDate);
-
-            return selDate;
-          });
-
-          ngModelCtrl.$parsers.push(function (value) {
-            if (value) {
-              var momentDate = null;
-              if (useUTC) {
-                momentDate = moment.utc(value, options.momentFormat);
-              } else {
-                momentDate = moment(value, options.momentFormat);
-              }
-              return momentDate.toDate();
+            if (useUTC) {
+              momentDate = moment.utc(valueDate, options.momentFormat);
+            } else {
+              momentDate = moment(valueDate, options.momentFormat);
             }
-
-            return null;
-          });
+            
+            datePicker.value(momentDate.format());
+            $(this).data('rawvalue', momentDate.toDate());
+          }
+          $(element).on('keydown', unmaskedvalue).on('keyup', unmaskedvalue).on('change', unmaskedvalue);
+          unmaskedvalue.bind($element)();
         }
-        
-        $(element).remove();
+        else {
+          if (ngModelCtrl) {
+            ngModelCtrl.$formatters.push(function (value) {
+              var selDate = null;
+              
+              if (value) {
+                var momentDate = null;
+  
+                if (useUTC) {
+                  momentDate = moment.utc(value);
+                } else {
+                  momentDate = moment(value);
+                }
+  
+                selDate = momentDate.format(options.momentFormat);
+              }
+              
+              datePicker.value(selDate);
+  
+              return selDate;
+            });
+  
+            ngModelCtrl.$parsers.push(function (value) {
+              if (value) {
+                var momentDate = null;
+                if (useUTC) {
+                  momentDate = moment.utc(value, options.momentFormat);
+                } else {
+                  momentDate = moment(value, options.momentFormat);
+                }
+                return momentDate.toDate();
+              }
+  
+              return null;
+            });
+          }
+          
+          $(element).remove();
+        }
       }
     }
   }])

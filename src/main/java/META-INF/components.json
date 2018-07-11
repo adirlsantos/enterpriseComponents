@@ -400,6 +400,118 @@
           "displayName_en_US": "Text value"
         }
       ]
+    },
+    {
+      "name": "crn-enterprise-masktext",
+      "text_pt_BR": "_Mask Text Box",
+      "text_en_US": "Mask Text Box",
+      "class": "adjust-icon mdi mdi-format-header-pound",
+      "designTimeHTML": "<input type='text' value=\"LLL-LLL-LLL\"/>",
+      "designTimeSelector": "cron-masktext",
+      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-masktext-box.template.html",
+      "properties": {
+        "onchange": {
+          "removable": true,
+          "type": "event"
+        },
+        "ng-model": {
+          "onSave": "javascript:function() { var result = arguments[0]; if (result.indexOf('.') == -1 && result.trim().length > 0 ) { result = 'vars.'+result;  }  return result; }",
+          "onDisplay": "javascript:function() { return arguments[0].replace('vars.',''); }"
+        }
+      },
+      "childrenProperties": [
+        {
+          "name": "options",
+          "selector": "cron-masktext",
+          "displayName_pt_BR": "Configuração",
+          "displayName_en_US": "Configuration"
+        }
+      ],
+      "groupedChildren": [
+        {
+          "text_pt_BR": "Rótulo",
+          "text_en_US": "Label",
+          "selector": "label"
+        },
+        {
+          "text_pt_BR": "Campo",
+          "text_en_US": "Field",
+          "selector": "cron-masktext"
+        }
+      ]
+    },
+    {
+      "name": "crn-enterprise-numerictext",
+      "text_pt_BR": "_Numeric Text Box",
+      "text_en_US": "Numeric Text Box",
+      "class": "adjust-icon mdi mdi-numeric-3-box-multiple-outline",
+      "designTimeHTML": "<input type='text' value=\"00,00\"/>",
+      "designTimeSelector": "cron-numerictext",
+      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-numerictext-box.template.html",
+      "properties": {
+        "onchange": {
+          "removable": true,
+          "type": "event"
+        },
+        "ng-model": {
+          "onSave": "javascript:function() { var result = arguments[0]; if (result.indexOf('.') == -1 && result.trim().length > 0 ) { result = 'vars.'+result;  }  return result; }",
+          "onDisplay": "javascript:function() { return arguments[0].replace('vars.',''); }"
+        }
+      },
+      "childrenProperties": [
+        {
+          "name": "options",
+          "selector": "cron-numerictext",
+          "displayName_pt_BR": "Configuração",
+          "displayName_en_US": "Configuration"
+        }
+      ],
+      "groupedChildren": [
+        {
+          "text_pt_BR": "Rótulo",
+          "text_en_US": "Label",
+          "selector": "label"
+        },
+        {
+          "text_pt_BR": "Campo",
+          "text_en_US": "Field",
+        "selector": "cron-numerictext"
+        }
+      ]
+    },
+    {
+      "name": "crn-enterprise-barcode",
+      "text_pt_BR": "_Código de Barras",
+      "text_en_US": "Bar Code",
+      "class": "adjust-icon mdi mdi-barcode",
+      "designTimeHTML": "<img width='100%' heigth='100%' src='plugins/cronapp-enterprise-js/img/barcode.png'>",
+      "designTimeSelector": "cron-barcode",
+      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-barcode.template.html",
+      "properties": {
+        "onchange": {
+          "removable": true,
+          "type": "event"
+        },
+        "ng-model": {
+          "onSave": "javascript:function() { var result = arguments[0]; if (result.indexOf('.') == -1 && result.trim().length > 0 ) { result = 'vars.'+result;  }  return result; }",
+          "onDisplay": "javascript:function() { return arguments[0].replace('vars.',''); }"
+        }
+      },
+      "childrenProperties": [
+        {
+          "name": "options",
+          "selector": "cron-barcode",
+          "displayName_pt_BR": "Configuração",
+          "displayName_en_US": "Configuration"
+        }
+      ],
+      "groupedChildren": [
+        {
+          "text_pt_BR": "Campo",
+          "text_en_US": "Field",
+        "selector": "cron-barcode"
+        }
+      ]
     }
   ]
 }

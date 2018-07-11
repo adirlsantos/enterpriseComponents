@@ -735,7 +735,7 @@
               datasourceName = attrs.crnDatasource;
             else
               datasourceName = $element.parent().attr('crn-datasource')
-            debugger;
+
             var requiredFilter = attrs.requiredFilter && attrs.requiredFilter.toString() == "true";
             if (requiredFilter) {
               this.forceDisableDatasource(datasourceName, scope);
