@@ -512,6 +512,40 @@
         "selector": "cron-barcode"
         }
       ]
+    },
+    {
+      "name": "crn-enterprise-qrcode",
+      "text_pt_BR": "_Código QR",
+      "text_en_US": "QR Code",
+      "class": "adjust-icon mdi mdi-qrcode-scan",
+      "designTimeHTML": "<img width='100%' heigth='100%' src='plugins/cronapp-enterprise-js/img/qrcode.png'>",
+      "designTimeSelector": "cron-qrcode",
+      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-qrcode.template.html",
+      "properties": {
+        "onchange": {
+          "removable": true,
+          "type": "event"
+        },
+        "ng-model": {
+          "onSave": "javascript:function() { var result = arguments[0]; if (result.indexOf('.') == -1 && result.trim().length > 0 ) { result = 'vars.'+result;  }  return result; }",
+          "onDisplay": "javascript:function() { return arguments[0].replace('vars.',''); }"
+        }
+      },
+      "childrenProperties": [
+        {
+          "name": "options",
+          "selector": "cron-qrcode",
+          "displayName_pt_BR": "Configuração",
+          "displayName_en_US": "Configuration"
+        }
+      ],
+      "groupedChildren": [
+        {
+          "text_pt_BR": "Campo",
+          "text_en_US": "Field",
+          "selector": "cron-qrcode"
+        }
+      ]
     }
   ]
 }

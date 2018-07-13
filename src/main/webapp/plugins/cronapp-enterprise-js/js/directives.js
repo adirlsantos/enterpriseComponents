@@ -131,7 +131,8 @@
                   }
                 } else {
                   try {
-                    return objectClone(value, this.dataSource.options.schema.model.fields);
+                    return value;
+                    //return objectClone(value, this.dataSource.options.schema.model.fields);
                   } catch(e){}
                 }
               }
@@ -508,4 +509,128 @@
       }
     }
   })
+  
+  .directive('cronBarcode', function ($compile) {
+    return {
+      restrict: 'E',
+      require: 'ngModel',
+      link: function (scope, element, attrs, ngModel) {
+        var cronBarcode = {};
+        
+        try {  
+          var json = window.buildElementOptions(element);
+          cronBarcode = JSON.parse(json);
+        } catch(err) {
+          console.log('Barcode invalid configuration! ' + err);
+        }
+        
+        var options = app.kendoHelper.getConfigBarcode(cronBarcode);
+        var parent = element.parent();
+        $(parent).append('<span class="cronBarcode" ng-model="' + attrs.ngModel + '"></span>');
+        var $element = $(parent).find('span.cronBarcode');
+        
+        var kendoBarcode = $element.kendoBarcode(options).data('kendoBarcode');
+        $(element).remove();
+        
+        scope.$watch(function(){return ngModel.$modelValue}, function(value, old){
+          var result = '';
+          
+          if (value !== old) {
+            result = value;
+          }
+          
+          options['value'] = result;
+          kendoBarcode.setOptions(options);
+        });
+      }
+    }
+  })  
+  
+  .directive('cronQrcode', function ($compile) {
+    return {
+      restrict: 'E',
+      require: 'ngModel',
+      link: function (scope, element, attrs, ngModel) {
+        var cronQrcode = {};
+        
+        try {  
+          var json = window.buildElementOptions(element);
+          cronQrcode = JSON.parse(json);
+        } catch(err) {
+          console.log('Qrcode invalid configuration! ' + err);
+        }
+        
+        var options = app.kendoHelper.getConfigQrcode(cronQrcode);
+        var parent = element.parent();
+        $(parent).append('<span class="cronQrcode" ng-model="' + attrs.ngModel + '"></span>');
+        var $element = $(parent).find('span.cronQrcode');
+        
+        var kendoQRCode = $element.kendoQRCode().data('kendoQRCode');
+        $(element).remove();
+        
+        scope.$watch(function(){return ngModel.$modelValue}, function(value, old){
+          var result = '';
+          
+          if (value !== old) {
+            result = value;
+          }
+          
+          options['value'] = result;
+          kendoQRCode.setOptions(options);
+        });
+      }
+    }
+  })  
+  
+  .directive('cronMasktext', function ($compile) {
+    return {
+      restrict: 'E',
+      require: 'ngModel',
+      link: function (scope, element, attrs, ngModelCtrl) {
+        var cronMasktext = {};
+        
+        try {  
+          var json = window.buildElementOptions(element);
+          cronMasktext = JSON.parse(json);
+        } catch(err) {
+          console.log('Masktext invalid configuration! ' + err);
+        }
+        
+        var options = app.kendoHelper.getConfigMasktext(cronMasktext);
+        var parent = element.parent();
+        $(parent).append('<input style="width: 100%;" class="cronMasktext" ng-model="' + attrs.ngModel + '">');
+        var $element = $(parent).find('input.cronMasktext');
+        
+        $element.kendoMaskedTextBox(options).data('kendoMaskedTextBox');
+        $compile($element)(element.scope());
+        $(element).remove();
+      }
+    }
+  }) 
+  
+  .directive('cronNumerictext', function ($compile) {
+    return {
+      restrict: 'E',
+      require: 'ngModel',
+      link: function (scope, element, attrs, ngModelCtrl) {
+        var cronNumerictext = {};
+        
+        try {  
+          var json = window.buildElementOptions(element);
+          cronNumerictext = JSON.parse(json);
+        } catch(err) {
+          console.log('Numerictext invalid configuration! ' + err);
+        }
+        
+        var options = app.kendoHelper.getConfigNumerictext(cronNumerictext);
+        var parent = element.parent();
+        $(parent).append('<input style="width: 100%;" class="cronNumerictext" ng-model="' + attrs.ngModel + '">');
+        var $element = $(parent).find('input.cronNumerictext');
+        
+        $element.kendoNumericTextBox(options).data('kendoNumericTextBox');
+        $compile($element)(element.scope());
+        $(element).remove();
+      }
+    }
+  }) 
 }(app));
