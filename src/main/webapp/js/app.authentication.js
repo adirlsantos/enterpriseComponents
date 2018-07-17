@@ -511,7 +511,7 @@ app.kendoHelper = {
       dataSource.data = (options.staticDataSource == null ? undefined : options.staticDataSource);
     } else if (options.dataSource) {
       dataSource = app.kendoHelper.getDataSource(options.dataSource);
-      valuePrimitive = (options.valuePrimitive == null ? false : options.valuePrimitive);
+      valuePrimitive = (options.valuePrimitive == null ? false : options.valuePrimitive == 'true');
     }
     
     if (!options.dataValueField || options.dataValueField.trim() == '') {
@@ -529,7 +529,7 @@ app.kendoHelper = {
       filter: (options.filter == null ? undefined : options.filter),
       valuePrimitive : valuePrimitive,
       optionLabel : (options.optionLabel == null ? undefined : options.optionLabel),
-      //valueTemplate : (options.valueTemplate == null ? undefined : options.valueTemplate),
+      valueTemplate : (options.valueTemplate == null ? undefined : options.valueTemplate),
       suggest: true
     };
     

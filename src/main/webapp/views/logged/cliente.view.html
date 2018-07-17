@@ -258,7 +258,57 @@
             <div class="component-holder ng-binding ng-scope  col-md-3" data-component="crn-enterprise-combobox" id="crn-combobox-tipo"> 
               <div class="form-group"> 
                 <label for="tipocliente" class="">Tipo</label> 
-                <cron-select options="" ng-required="false" id="tipocliente" ng-model="Cliente.active.tipo" class="crn-select form-control" style=""><cron-options><cron-header-template>&lt;h3&gt;Relação de Tipos&lt;/h3&gt;</cron-header-template><cron-template></cron-template><cron-footer-template></cron-footer-template><cron-placeholder>Selecione um item...</cron-placeholder><cron-data-source></cron-data-source><cron-filter>contains</cron-filter><cron-data-text-field></cron-data-text-field><cron-data-value-field></cron-data-value-field><cron-option-label></cron-option-label><cron-dynamic>false</cron-dynamic><cron-value-primitive></cron-value-primitive><cron-cascade-from></cron-cascade-from><cron-cascade-from-field></cron-cascade-from-field><cron-value-template></cron-value-template><cron-drop-down-list></cron-drop-down-list><cron-static-data-source><cron-key>1</cron-key><cron-value>Valor 1</cron-value></cron-static-data-source><cron-static-data-source><cron-key>2</cron-key><cron-value>Valor 2</cron-value></cron-static-data-source><cron-static-data-source><cron-key>3</cron-key><cron-value>Valor 3</cron-value></cron-static-data-source></cron-options></cron-select> 
+                <cron-select options="" ng-required="false" id="tipocliente" ng-model="Cliente.active.tipo" class="crn-select form-control" style=""> 
+                  <cron-options> 
+                    <cron-header-template>
+                       &lt;h3&gt;Relação de Tipos&lt;/h3&gt; 
+                    </cron-header-template> 
+                    <cron-template></cron-template> 
+                    <cron-footer-template></cron-footer-template> 
+                    <cron-placeholder>
+                       Selecione um item... 
+                    </cron-placeholder> 
+                    <cron-data-source></cron-data-source> 
+                    <cron-filter>
+                       contains 
+                    </cron-filter> 
+                    <cron-data-text-field></cron-data-text-field> 
+                    <cron-data-value-field></cron-data-value-field> 
+                    <cron-option-label></cron-option-label> 
+                    <cron-dynamic>
+                       false 
+                    </cron-dynamic> 
+                    <cron-value-primitive></cron-value-primitive> 
+                    <cron-cascade-from></cron-cascade-from> 
+                    <cron-cascade-from-field></cron-cascade-from-field> 
+                    <cron-value-template></cron-value-template> 
+                    <cron-drop-down-list></cron-drop-down-list> 
+                    <cron-static-data-source> 
+                      <cron-key>
+                         1 
+                      </cron-key> 
+                      <cron-value>
+                         Valor 1 
+                      </cron-value> 
+                    </cron-static-data-source> 
+                    <cron-static-data-source> 
+                      <cron-key>
+                         2 
+                      </cron-key> 
+                      <cron-value>
+                         Valor 2 
+                      </cron-value> 
+                    </cron-static-data-source> 
+                    <cron-static-data-source> 
+                      <cron-key>
+                         3 
+                      </cron-key> 
+                      <cron-value>
+                         Valor 3 
+                      </cron-value> 
+                    </cron-static-data-source> 
+                  </cron-options> 
+                </cron-select> 
               </div> 
             </div> 
             <div class="component-holder ng-binding ng-scope  col-md-3" data-component="crn-enterprise-dynamic-autocomplete" id="crn-enterprise-dynamic-autocomplete-824054"> 
@@ -332,18 +382,225 @@
             <div class="component-holder ng-binding ng-scope  col-md-3" data-component="crn-enterprise-dynamic-combobox" id="crn-enterprise-dynamic-combobox-774916"> 
               <div class="form-group"> 
                 <label for="combo-estado">Estado</label> 
-                <cron-dynamic-select options="" ng-required="false" id="combo-estado" ng-model="Cliente.active.estado" class="crn-select form-control" style=""><cron-options><cron-header-template>&lt;h3&gt;Lista&lt;/h3&gt;</cron-header-template><cron-template></cron-template><cron-footer-template></cron-footer-template><cron-placeholder>Selecione um Item...</cron-placeholder><cron-data-source><cron-id>qec3xixpe0xk</cron-id><cron-param-values></cron-param-values><cron-entity-full-name>app.entity.Estado</cron-entity-full-name><cron-schema-fields><cron-name>id</cron-name><cron-type>String</cron-type><cron-nullable>false</cron-nullable><cron-key>true</cron-key></cron-schema-fields><cron-schema-fields><cron-name>nome</cron-name><cron-type>String</cron-type><cron-nullable>true</cron-nullable><cron-key>false</cron-key></cron-schema-fields></cron-data-source><cron-filter>contains</cron-filter><cron-data-text-field>nome</cron-data-text-field><cron-data-value-field>id</cron-data-value-field><cron-option-label>Selecione um Estado</cron-option-label><cron-dynamic>true</cron-dynamic><cron-value-primitive>false</cron-value-primitive><cron-cascade-from></cron-cascade-from><cron-cascade-from-field></cron-cascade-from-field><cron-value-template></cron-value-template><cron-drop-down-list>true</cron-drop-down-list></cron-options></cron-dynamic-select> 
+                <cron-dynamic-select options="" ng-required="false" id="combo-estado" ng-model="Cliente.active.estado.id" class="crn-select form-control" style=""> 
+                  <cron-options> 
+                    <cron-header-template>
+                       &lt;h3&gt;Lista&lt;/h3&gt; 
+                    </cron-header-template> 
+                    <cron-template></cron-template> 
+                    <cron-footer-template></cron-footer-template> 
+                    <cron-placeholder>
+                       Selecione um Item... 
+                    </cron-placeholder> 
+                    <cron-data-source> 
+                      <cron-id>
+                         qec3xixpe0xk 
+                      </cron-id> 
+                      <cron-param-values></cron-param-values> 
+                      <cron-entity-full-name>
+                         app.entity.Estado 
+                      </cron-entity-full-name> 
+                      <cron-schema-fields> 
+                        <cron-name>
+                           id 
+                        </cron-name> 
+                        <cron-type>
+                           String 
+                        </cron-type> 
+                        <cron-nullable>
+                           false 
+                        </cron-nullable> 
+                        <cron-key>
+                           true 
+                        </cron-key> 
+                      </cron-schema-fields> 
+                      <cron-schema-fields> 
+                        <cron-name>
+                           nome 
+                        </cron-name> 
+                        <cron-type>
+                           String 
+                        </cron-type> 
+                        <cron-nullable>
+                           true 
+                        </cron-nullable> 
+                        <cron-key>
+                           false 
+                        </cron-key> 
+                      </cron-schema-fields> 
+                    </cron-data-source> 
+                    <cron-filter>
+                       contains 
+                    </cron-filter> 
+                    <cron-data-text-field>
+                       nome 
+                    </cron-data-text-field> 
+                    <cron-data-value-field>
+                       id 
+                    </cron-data-value-field> 
+                    <cron-option-label>
+                       Selecione um Estado 
+                    </cron-option-label> 
+                    <cron-dynamic>
+                       true 
+                    </cron-dynamic> 
+                    <cron-value-primitive>
+                       true 
+                    </cron-value-primitive> 
+                    <cron-cascade-from></cron-cascade-from> 
+                    <cron-cascade-from-field></cron-cascade-from-field> 
+                    <cron-value-template></cron-value-template> 
+                    <cron-drop-down-list>
+                       true 
+                    </cron-drop-down-list> 
+                  </cron-options> 
+                </cron-dynamic-select> 
               </div> 
             </div> 
             <div class="component-holder ng-binding ng-scope  col-md-3" data-component="crn-enterprise-dynamic-combobox" id="crn-enterprise-dynamic-combobox-227181"> 
               <div class="form-group"> 
                 <label for="">Município</label> 
-                <cron-dynamic-select options="" ng-required="false" id="combo-municipio" ng-model="Cliente.active.municipio" class="crn-select form-control" style=""><cron-options><cron-header-template>&lt;h3&gt;Lista&lt;/h3&gt;</cron-header-template><cron-template></cron-template><cron-footer-template></cron-footer-template><cron-placeholder>Selecione um Item...</cron-placeholder><cron-data-source><cron-id>h7qzj5dj4a46</cron-id><cron-param-values></cron-param-values><cron-entity-full-name>app.entity.Municipio</cron-entity-full-name><cron-schema-fields><cron-name>estado</cron-name><cron-type>String</cron-type><cron-nullable>true</cron-nullable><cron-key>false</cron-key></cron-schema-fields><cron-schema-fields><cron-name>id</cron-name><cron-type>String</cron-type><cron-nullable>false</cron-nullable><cron-key>true</cron-key></cron-schema-fields><cron-schema-fields><cron-name>nome</cron-name><cron-type>String</cron-type><cron-nullable>true</cron-nullable><cron-key>false</cron-key></cron-schema-fields></cron-data-source><cron-filter>contains</cron-filter><cron-data-text-field>nome</cron-data-text-field><cron-data-value-field>id</cron-data-value-field><cron-option-label>Selecione um Municipio</cron-option-label><cron-dynamic>true</cron-dynamic><cron-value-primitive>false</cron-value-primitive><cron-cascade-from>combo-estado</cron-cascade-from><cron-cascade-from-field>estado</cron-cascade-from-field><cron-value-template></cron-value-template><cron-drop-down-list>true</cron-drop-down-list></cron-options></cron-dynamic-select> 
+                <cron-dynamic-select options="" ng-required="false" id="combo-municipio" ng-model="Cliente.active.municipio.id" class="crn-select form-control" style=""> 
+                  <cron-options> 
+                    <cron-header-template>
+                       &lt;h3&gt;Lista&lt;/h3&gt; 
+                    </cron-header-template> 
+                    <cron-template></cron-template> 
+                    <cron-footer-template></cron-footer-template> 
+                    <cron-placeholder>
+                       Selecione um Item... 
+                    </cron-placeholder> 
+                    <cron-data-source> 
+                      <cron-id>
+                         h7qzj5dj4a46 
+                      </cron-id> 
+                      <cron-param-values></cron-param-values> 
+                      <cron-entity-full-name>
+                         app.entity.Municipio 
+                      </cron-entity-full-name> 
+                      <cron-schema-fields> 
+                        <cron-name>
+                           estado 
+                        </cron-name> 
+                        <cron-type>
+                           String 
+                        </cron-type> 
+                        <cron-nullable>
+                           true 
+                        </cron-nullable> 
+                        <cron-key>
+                           false 
+                        </cron-key> 
+                      </cron-schema-fields> 
+                      <cron-schema-fields> 
+                        <cron-name>
+                           id 
+                        </cron-name> 
+                        <cron-type>
+                           String 
+                        </cron-type> 
+                        <cron-nullable>
+                           false 
+                        </cron-nullable> 
+                        <cron-key>
+                           true 
+                        </cron-key> 
+                      </cron-schema-fields> 
+                      <cron-schema-fields> 
+                        <cron-name>
+                           nome 
+                        </cron-name> 
+                        <cron-type>
+                           String 
+                        </cron-type> 
+                        <cron-nullable>
+                           true 
+                        </cron-nullable> 
+                        <cron-key>
+                           false 
+                        </cron-key> 
+                      </cron-schema-fields> 
+                    </cron-data-source> 
+                    <cron-filter>
+                       contains 
+                    </cron-filter> 
+                    <cron-data-text-field>
+                       nome 
+                    </cron-data-text-field> 
+                    <cron-data-value-field>
+                       id 
+                    </cron-data-value-field> 
+                    <cron-option-label>
+                       Selecione um Municipio 
+                    </cron-option-label> 
+                    <cron-dynamic>
+                       true 
+                    </cron-dynamic> 
+                    <cron-value-primitive>
+                       true 
+                    </cron-value-primitive> 
+                    <cron-cascade-from>
+                       combo-estado 
+                    </cron-cascade-from> 
+                    <cron-cascade-from-field>
+                       estado 
+                    </cron-cascade-from-field> 
+                    <cron-value-template></cron-value-template> 
+                    <cron-drop-down-list>
+                       true 
+                    </cron-drop-down-list> 
+                  </cron-options> 
+                </cron-dynamic-select> 
+              </div> 
+            </div> 
+             
+            <div class="component-holder ng-binding ng-scope  col-md-3" data-component="crn-enterprise-masktext" id="crn-enterprise-masktext-1037980" name="crn-enterprise-masktext-1037980"> 
+              <div class="form-group"> 
+                <label for="input-date8981" class="">CEP</label> 
+                <cron-masktext options="" ng-model="Cliente.active.cep" class="form-control" id="input-masktext8981" ng-required="false" style=""><cron-options><cron-mask>99.999-999</cron-mask><cron-unmask-on-post>true</cron-unmask-on-post><cron-prompt-char>underline</cron-prompt-char><cron-clear-prompt-char>true</cron-clear-prompt-char></cron-options></cron-masktext> 
+              </div> 
+            </div> 
+            <div class="component-holder ng-binding ng-scope  col-md-3" data-component="crn-enterprise-masktext" id="crn-enterprise-masktext-995817" name="crn-enterprise-masktext-995817"> 
+              <div class="form-group"> 
+                <label for="input-date7778" class="">C.P.F</label> 
+                <cron-masktext options="" ng-model="vars.model7778" class="form-control" id="input-masktext7778" ng-required="false" style=""> 
+                  <cron-options> 
+                    <cron-mask>
+                       000.000.000-00 
+                    </cron-mask> 
+                    <cron-unmask-on-post></cron-unmask-on-post> 
+                    <cron-prompt-char>
+                       space 
+                    </cron-prompt-char> 
+                    <cron-clear-prompt-char></cron-clear-prompt-char> 
+                  </cron-options> 
+                </cron-masktext> 
+              </div> 
+            </div> 
+            <div class="component-holder ng-binding ng-scope  col-md-3" data-component="crn-enterprise-masktext" id="crn-enterprise-masktext-168622" name="crn-enterprise-masktext-168622"> 
+              <div class="form-group"> 
+                <label for="input-date7055" class="">C.N.P.J</label> 
+                <cron-masktext options="" ng-model="Cliente.active.cnpj" class="form-control" id="input-masktext7055" ng-required="false" style=""> 
+                  <cron-options> 
+                    <cron-mask>
+                       #0.000.000/0000-00 
+                    </cron-mask> 
+                    <cron-unmask-on-post>
+                       true 
+                    </cron-unmask-on-post> 
+                    <cron-prompt-char>
+                       underline 
+                    </cron-prompt-char> 
+                    <cron-clear-prompt-char>
+                       true 
+                    </cron-clear-prompt-char> 
+                  </cron-options> 
+                </cron-masktext> 
               </div> 
             </div> 
           </div> 
           <div class="row"> 
-            <div class="component-holder ng-binding ng-scope col-md-12" data-component="crn-checkbox" id="crn-checkbox-57741"> 
+            <div class="component-holder ng-binding ng-scope  col-md-12" data-component="crn-checkbox" id="crn-checkbox-57741"> 
               <div class="checkbox form-group"> 
                 <input type="checkbox" id="vars.checkbox1287" ng-model="Cliente.active.revendodor" class="k-checkbox"> 
                 <label class="k-checkbox-label" for="vars.checkbox1287">Cliente é um revendedor?</label> 
@@ -363,21 +620,21 @@
                   </cron-options> 
                 </cron-switch> 
               </div> 
-            </div> 
-            <div class="form-group component-holder col-md-12" ng-model="Cliente.active.classificacao" data-component="crn-group" id="crn-group-816131"> 
-              <div class="radio" data-component="crn-groupOption"> 
-                <input type="radio" name="groupOption" id="radio1" class="k-radio"> 
-                <label class="k-radio-label" crn-value="" value="1" for="radio1"><span class="" data-container="true">Pequeno Porte</span></label> 
-              </div> 
-              <div class="radio" data-component="crn-groupOption"> 
-                <input type="radio" name="groupOption" id="radio2" class="k-radio"> 
-                <label class="k-radio-label" crn-value="" value="2" for="radio2"><span class="" data-container="true">Médio Porte</span></label> 
-              </div> 
-              <div class="radio active" data-component="crn-groupOption"> 
-                <input type="radio" name="groupOption" id="radio3" class="k-radio"> 
-                <label class="k-radio-label" crn-value="" value="3" for="radio3"><span class="" data-container="true">Grande Porte</span></label> 
-              </div> 
-            </div> 
+            </div><div class="component-holder ng-binding ng-scope col-md-12" data-component="crn-textinput" id="crn-textinput-647636" name="crn-textinput-647636"><div class="form-group"><label for="exampleInputEmail1">Label</label><input type="text" mask="" mask-placeholder="" ng-required="false" ng-model="vars.input3480" class="form-control" id="input3480" placeholder="Placeholder text"></div></div> 
+            <!--<div class="form-group component-holder col-md-12" ng-model="Cliente.active.classificacao" data-component="crn-group" id="crn-group-816131"> --> 
+            <!--  <div class="radio" data-component="crn-groupOption"> --> 
+            <!--    <input type="radio" name="groupOption" id="radio1" class="k-radio"> --> 
+            <!--    <label class="k-radio-label" crn-value="" value="1" for="radio1"><span class="" data-container="true">Pequeno Porte</span></label> --> 
+            <!--  </div> --> 
+            <!--  <div class="radio" data-component="crn-groupOption"> --> 
+            <!--    <input type="radio" name="groupOption" id="radio2" class="k-radio"> --> 
+            <!--    <label class="k-radio-label" crn-value="" value="2" for="radio2"><span class="" data-container="true">Médio Porte</span></label> --> 
+            <!--  </div> --> 
+            <!--  <div class="radio active" data-component="crn-groupOption"> --> 
+            <!--    <input type="radio" name="groupOption" id="radio3" class="k-radio"> --> 
+            <!--    <label class="k-radio-label" crn-value="" value="3" for="radio3"><span class="" data-container="true">Grande Porte</span></label> --> 
+            <!--  </div> --> 
+            <!--</div> --> 
           </div> 
         </fieldset> 
       </form> 
