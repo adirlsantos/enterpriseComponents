@@ -18,9 +18,14 @@
   <link rel="stylesheet" href="css/app.css"> 
   <script src="js/customModules.js"></script> 
   <script src="js/customStateProvider.js"></script> 
+  <!-- Start Custom Kendo --> 
   <link rel="stylesheet" href="plugins/summernote/dist/summernote.css"> 
-  <link rel="stylesheet" href="plugins/cronapp-framework-js/dist/js/kendo-ui/styles/kendo.black.min.css"> 
-  <link rel="stylesheet" href="plugins/cronapp-framework-js/dist/js/kendo-ui/styles/kendo.default.mobile.min.css"> 
+  <link rel="stylesheet" href="plugins/cronapp-enterprise-js/js/kendo-ui/styles/kendo.common-bootstrap.min.css"> 
+  <link rel="stylesheet" href="plugins/cronapp-enterprise-js/js/kendo-ui/styles/kendo.bootstrap.min.css"> 
+  <link rel="stylesheet" href="plugins/cronapp-framework-js/dist/js/kendo-ui/styles/kendo.bootstrap.mobile.min.css"> 
+  <!-- End Custom Kendo --> 
+  <link rel="stylesheet" href="plugins/cronapp-framework-js/dist/js/kendo-ui/styles/kendo.common-bootstrap.min.css"> 
+  <link rel="stylesheet" href="plugins/cronapp-framework-js/dist/js/kendo-ui/styles/kendo.bootstrap.min.css"> 
  </head> 
  <body> 
   <div ui-view class="fill"></div> 
@@ -64,7 +69,7 @@
   <!-- Custom --> 
   <script src="js/events.js"></script> 
   <!-- CronApp Framework --> 
-  <script src="js/app.authentication.js"></script> 
+  <script src="plugins/cronapp-framework-js/dist/js/app.authentication.js"></script> 
   <script src="plugins/cronapp-framework-js/dist/js/controllers.authentication.js"></script> 
   <script src="plugins/cronapp-framework-js/dist/js/services.js"></script> 
   <script src="plugins/cronapp-framework-js/dist/js/LocaleService.js"></script> 
@@ -72,9 +77,11 @@
   <script src="plugins/cronapp-framework-js/js/directives.js"></script> 
   <script src="plugins/cronapp-framework-js/dist/js/filters.js"></script> 
   <script src="plugins/cronapp-framework-js/components/js/datasource.js"></script> 
+  
   <!-- CronApp Reports --> 
   <script src="plugins/cronapp-framework-js/dist/js/reports/parameters.controller.js"></script> 
   <script src="plugins/cronapp-framework-js/dist/js/reports/reports.service.js"></script> 
+  
   <!-- Custom Controllers --> 
   <script src="js/custom.controllers.js"></script> 
   <script src="plugins/cronapp-framework-js/dist/components/js/jquery.mask.min.js"></script> 
@@ -82,13 +89,14 @@
   <script src="plugins/cronapp-framework-js/dist/js/upload.service.js"></script> 
   <script src="plugins/cronapp-framework-js/dist/components/js/format.min.js"></script> 
   <script src="js/system-events.js"></script> 
-  <script src="plugins/cronapp-common-js/dist/parser.js"></script> 
+  <script src="plugins/cronapp-common-js/dist/parser.min.js"></script> 
   <script src="plugins/angular-summernote/dist/angular-summernote.min.js"></script> 
   <script src="plugins/summernote/dist/summernote.js"></script> 
   <script src="plugins/summernote/dist/lang/summernote-pt-BR.min.js"></script> 
   <script src="plugins/cronapp-framework-js/dist/components/js/qrcode.js"></script> 
   <script src="plugins/cronapp-framework-js/dist/js/tinymce/plugins/tinymce/tinymce.min.js"></script> 
   <script src="plugins/cronapp-framework-js/dist/js/tinymce/plugins/angular-ui-tinymce/dist/tinymce.min.js"></script> 
+  
   <!--Dependencias do kendo-ui--> 
   <script src="plugins/cronapp-framework-js/dist/js/kendo-ui/js/kendo.all.min.js"></script> 
   <script src="plugins/cronapp-framework-js/dist/js/kendo-ui/js/jszip.min.js"></script> 

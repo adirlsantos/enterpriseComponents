@@ -9,7 +9,7 @@
       "class": "adjust-icon mdi mdi-calendar-multiple",
       "designTimeHTML": "<input type='date'/>",
       "designTimeSelector": "cron-date",
-      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-date.template.html",
+      "templateURL": "src/main/webapp/plugins/cronapp-framework-js/dist/components/templates/cron-date.template.html",
       "properties": {
         "onchange": {
           "removable": true,
@@ -48,7 +48,7 @@
       "class": "adjust-icon mdi mdi-equal-box",
       "designTimeHTML": "<select></select>",
       "designTimeSelector": "cron-select",
-      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-combobox.template.html",
+      "templateURL": "src/main/webapp/plugins/cronapp-framework-js/dist/components/templates/cron-combobox.template.html",
       "properties": {
         "onchange": {
           "removable": true,
@@ -89,7 +89,7 @@
       "class": "adjust-icon mdi mdi-nutrition",
       "designTimeHTML": "<select></select>",
       "designTimeSelector": "cron-dynamic-select",
-      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-dynamic-combobox.template.html",
+      "templateURL": "src/main/webapp/plugins/cronapp-framework-js/dist/components/templates/cron-dynamic-combobox.template.html",
       "properties": {
         "onchange": {
           "removable": true,
@@ -130,7 +130,7 @@
       "class": "adjust-icon mdi mdi-nutrition",
       "designTimeHTML": "<select></select>",
       "designTimeSelector": "cron-multi-select",
-      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-combobox-multiple.template.html",
+      "templateURL": "src/main/webapp/plugins/cronapp-framework-js/dist/components/templates/cron-combobox-multiple.template.html",
       "properties": {
         "onchange": {
           "removable": true,
@@ -171,7 +171,7 @@
       "class": "adjust-icon mdi mdi-receipt",
       "designTimeHTML": "<select></select>",
       "designTimeSelector": "cron-auto-complete",
-      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-autocomplete.template.html",
+      "templateURL": "src/main/webapp/plugins/cronapp-framework-js/dist/components/templates/cron-autocomplete.template.html",
       "properties": {
         "onchange": {
           "removable": true,
@@ -212,7 +212,7 @@
       "class": "adjust-icon mdi mdi-receipt",
       "designTimeHTML": "<select></select>",
       "designTimeSelector": "cron-auto-complete",      
-      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-dynamic-autocomplete.template.html",
+      "templateURL": "src/main/webapp/plugins/cronapp-framework-js/dist/components/templates/cron-dynamic-autocomplete.template.html",
       "properties": {
         "onchange": {
           "removable": true,
@@ -253,7 +253,7 @@
       "class": "adjust-icon mdi mdi-server-network",
       "designTimeHTML": "<input type='range' min='1' max='10' value='5' class='slider'/>",
       "designTimeSelector": "cron-slider",      
-      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-slider.template.html",
+      "templateURL": "src/main/webapp/plugins/cronapp-framework-js/dist/components/templates/cron-slider.template.html",
       "properties": {
         "onchange": {
           "removable": true,
@@ -292,9 +292,9 @@
       "text_pt_BR": "_Switch",
       "text_en_US": "Switch",
       "class": "adjust-icon mdi mdi-toggle-switch-off",
-      "designTimeHTML": "<img width='20%' src='plugins/cronapp-enterprise-js/img/switch.png'>",
+      "designTimeHTML": "<img width='20%' src='plugins/cronapp-framework-js/dist/img/switch.png'>",
       "designTimeSelector": "cron-switch",
-      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-switch.template.html",
+      "templateURL": "src/main/webapp/plugins/cronapp-framework-js/dist/components/templates/cron-switch.template.html",
       "properties": {
         "onchange": {
           "removable": true,
@@ -333,7 +333,7 @@
       "text_pt_BR": "_Checkbox",
       "text_en_US": "Checkbox",
       "class": "adjust-icon mdi mdi-checkbox-marked-outline",
-      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-checkbox.template.html",
+      "templateURL": "src/main/webapp/plugins/cronapp-framework-js/dist/components/templates/cron-checkbox.template.html",
       "properties": {
         "onchange": {
           "removable": true,
@@ -366,7 +366,7 @@
 	    "forcedGroup":true,
       "class": "adjust-icon mdi mdi-radiobox-marked",
       "wrapper":false,
-      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-radio.template.html",
+      "templateURL": "src/main/webapp/plugins/cronapp-framework-js/dist/components/templates/cron-radio.template.html",
       "properties": {
         "ng-model": {
           "onSave": "javascript:function() { var result = arguments[0]; if (result.indexOf('.') == -1 && result.trim().length > 0 ) { result = 'vars.'+result;  }  return result; }",
@@ -402,91 +402,13 @@
       ]
     },
     {
-      "name": "crn-enterprise-masktext",
-      "text_pt_BR": "_Mask Text Box",
-      "text_en_US": "Mask Text Box",
-      "class": "adjust-icon mdi mdi-format-header-pound",
-      "designTimeHTML": "<input type='text' value=\"LLL-LLL-LLL\"/>",
-      "designTimeSelector": "cron-masktext",
-      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-masktext-box.template.html",
-      "properties": {
-        "onchange": {
-          "removable": true,
-          "type": "event"
-        },
-        "ng-model": {
-          "onSave": "javascript:function() { var result = arguments[0]; if (result.indexOf('.') == -1 && result.trim().length > 0 ) { result = 'vars.'+result;  }  return result; }",
-          "onDisplay": "javascript:function() { return arguments[0].replace('vars.',''); }"
-        }
-      },
-      "childrenProperties": [
-        {
-          "name": "options",
-          "selector": "cron-masktext",
-          "displayName_pt_BR": "Configuração",
-          "displayName_en_US": "Configuration"
-        }
-      ],
-      "groupedChildren": [
-        {
-          "text_pt_BR": "Rótulo",
-          "text_en_US": "Label",
-          "selector": "label"
-        },
-        {
-          "text_pt_BR": "Campo",
-          "text_en_US": "Field",
-          "selector": "cron-masktext"
-        }
-      ]
-    },
-    {
-      "name": "crn-enterprise-numerictext",
-      "text_pt_BR": "_Numeric Text Box",
-      "text_en_US": "Numeric Text Box",
-      "class": "adjust-icon mdi mdi-numeric-3-box-multiple-outline",
-      "designTimeHTML": "<input type='text' value=\"00,00\"/>",
-      "designTimeSelector": "cron-numerictext",
-      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-numerictext-box.template.html",
-      "properties": {
-        "onchange": {
-          "removable": true,
-          "type": "event"
-        },
-        "ng-model": {
-          "onSave": "javascript:function() { var result = arguments[0]; if (result.indexOf('.') == -1 && result.trim().length > 0 ) { result = 'vars.'+result;  }  return result; }",
-          "onDisplay": "javascript:function() { return arguments[0].replace('vars.',''); }"
-        }
-      },
-      "childrenProperties": [
-        {
-          "name": "options",
-          "selector": "cron-numerictext",
-          "displayName_pt_BR": "Configuração",
-          "displayName_en_US": "Configuration"
-        }
-      ],
-      "groupedChildren": [
-        {
-          "text_pt_BR": "Rótulo",
-          "text_en_US": "Label",
-          "selector": "label"
-        },
-        {
-          "text_pt_BR": "Campo",
-          "text_en_US": "Field",
-        "selector": "cron-numerictext"
-        }
-      ]
-    },
-    {
       "name": "crn-enterprise-barcode",
       "text_pt_BR": "_Código de Barras",
       "text_en_US": "Bar Code",
       "class": "adjust-icon mdi mdi-barcode",
-      "designTimeHTML": "<img width='100%' heigth='100%' src='plugins/cronapp-enterprise-js/img/barcode.png'>",
+      "designTimeHTML": "<img width='100%' heigth='100%' src='plugins/cronapp-framework-js/dist/img/barcode.png'>",
       "designTimeSelector": "cron-barcode",
-      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-barcode.template.html",
+      "templateURL": "src/main/webapp/plugins/cronapp-framework-js/dist/components/templates/cron-barcode.template.html",
       "properties": {
         "onchange": {
           "removable": true,
@@ -518,9 +440,9 @@
       "text_pt_BR": "_Código QR",
       "text_en_US": "QR Code",
       "class": "adjust-icon mdi mdi-qrcode-scan",
-      "designTimeHTML": "<img width='100%' heigth='100%' src='plugins/cronapp-enterprise-js/img/qrcode.png'>",
+      "designTimeHTML": "<img width='100%' heigth='100%' src='plugins/cronapp-framework-js/dist/img/qrcode.png'>",
       "designTimeSelector": "cron-qrcode",
-      "templateURL": "src/main/webapp/plugins/cronapp-enterprise-js/components/templates/cron-qrcode.template.html",
+      "templateURL": "src/main/webapp/plugins/cronapp-framework-js/dist/components/templates/cron-qrcode.template.html",
       "properties": {
         "onchange": {
           "removable": true,
