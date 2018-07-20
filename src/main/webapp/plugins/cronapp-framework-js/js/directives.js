@@ -1550,7 +1550,7 @@
           $(parent).append('<input style="width: 100%;" ' + id + name + ' class="cronSelect" ng-model="' + attrs.ngModel + '"/>');
           var $element = $(parent).find('input.cronSelect');
         
-          var options = app.kendoHelper.getConfigCombobox(select);
+          var options = app.kendoHelper.getConfigCombobox(select, scope);
           var combobox = $element.kendoComboBox(options).data('kendoComboBox');
           $(element).remove();
           
@@ -1604,7 +1604,7 @@
             console.log('DynamicComboBox invalid configuration! ' + err);
           }
           
-          var options = app.kendoHelper.getConfigCombobox(select);
+          var options = app.kendoHelper.getConfigCombobox(select, scope);
           try {
             delete options.dataSource.schema.model.id;
           } catch(e){}
@@ -1694,7 +1694,7 @@
           var _scope = scope;
           var _ngModelCtrl = ngModelCtrl;
           
-          var options = app.kendoHelper.getConfigCombobox(select);
+          var options = app.kendoHelper.getConfigCombobox(select, scope);
           
           try {
             delete options.dataSource.schema.model.id;
@@ -1782,7 +1782,7 @@
           delete options.dataSource.schema.model.id;
         } catch(e){}
 
-        var options = app.kendoHelper.getConfigCombobox(select);
+        var options = app.kendoHelper.getConfigCombobox(select, scope);
         var parent = element.parent();
         var id = attrs.id ? ' id="' + attrs.id + '"' : '';
         var name = attrs.name ? ' name="' + attrs.name + '"' : '';
