@@ -1529,6 +1529,7 @@
     };
   }])
   
+    
     app.directive('cronSelect', function ($compile) {
     return {
       restrict: 'E',
@@ -2216,7 +2217,7 @@
         $(element).remove();
       }
     }
-  }) 
+  })
 }(app));
 
 function maskDirectiveAsDate($compile, $translate) {
