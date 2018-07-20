@@ -362,6 +362,15 @@ window.safeApply = function(fn) {
 };
 
 app.kendoHelper = {
+  generateId: function() {
+    var numbersOnly = '0123456789';
+    var result = Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+    if (numbersOnly.indexOf(result.substr(0,1)) > -1)
+      return this.generateId();
+    return result;
+  },
   getSchema: function(dataSource) {
     var parseAttribute = [
       { kendoType: "string", entityType: ["string", "character", "uuid", "guid"] },
@@ -397,15 +406,6 @@ app.kendoHelper = {
       });
     }
     return schema;
-  },
-  generateId: function() {
-    var numbersOnly = '0123456789';
-    var result = Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
-    if (numbersOnly.indexOf(result.substr(0,1)) > -1)
-      return this.generateId();
-    return result;
   },
   getDataSource: function(dataSource, scope, allowPaging, pageCount, columns) {
     var schema = this.getSchema(dataSource);
@@ -745,7 +745,7 @@ app.kendoHelper = {
       dataSource.data = (options.staticDataSource == null ? undefined : options.staticDataSource);
     } else if (options.dataSource) {
       dataSource = app.kendoHelper.getDataSource(options.dataSource, scope);
-      valuePrimitive = (options.valuePrimitive == null ? undefined : options.valuePrimitive);
+      valuePrimitive = (options.valuePrimitive == null ? undefined : options.valuePrimitive == "true");
     }
 
     if (!options.dataValueField || options.dataValueField.trim() == '') {
@@ -771,7 +771,7 @@ app.kendoHelper = {
       config['autoBind'] = false;
     }
 
-    if (!valuePrimitive) {
+    if (!config.valuePrimitive) {
       config['optionLabel'] = (options.optionLabel == null ? undefined : options.optionLabel);
     }
 

@@ -252,17 +252,46 @@
 		"entityFullName": "app.entity.Municipio",
 		"query": {
 			"isValid": true,
+			"isEmpty": false,
+			"operationType": "object",
+			"type": "select",
 			"rulesEntity": [
 				{
 					"entity": "Municipio",
-					"alias": "m",
-					"namespace": "app.entity.Municipio"
+					"namespace": "app.entity.Municipio",
+					"alias": "m"
 				}
 			],
 			"rulesSelect": [
 				{
 					"func": "get",
-					"field": "m"
+					"field": "m",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "m.estado",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "m.estado.id",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "m.estado.nome",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "m.id",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "m.nome",
+					"type": "string"
 				}
 			],
 			"rulesGroupBy": [],
@@ -270,10 +299,13 @@
 			"rulesOrderBy": [],
 			"rules": {
 				"condition": "AND",
+				"rules": [],
 				"not": false,
-				"valid": true,
-				"rules": []
-			}
+				"valid": true
+			},
+			"isRawSql": false,
+			"multiTenant": true,
+			"paginatorAutomatic": false
 		},
 		"queryParamsValues": [],
 		"verbs": {
@@ -300,11 +332,13 @@
 		},
 		"defaultValues": {
 			"id": null,
-			"nome": null
+			"nome": null,
+			"estado": null
 		},
 		"security": {
 			"id": null,
-			"nome": null
+			"nome": null,
+			"estado": null
 		},
 		"calcFields": {},
 		"calcFieldsSecurity": {},
@@ -398,17 +432,31 @@
 		"entityFullName": "app.entity.Estado",
 		"query": {
 			"isValid": true,
+			"isEmpty": false,
+			"operationType": "object",
+			"type": "select",
 			"rulesEntity": [
 				{
 					"entity": "Estado",
-					"alias": "e",
-					"namespace": "app.entity.Estado"
+					"namespace": "app.entity.Estado",
+					"alias": "e"
 				}
 			],
 			"rulesSelect": [
 				{
 					"func": "get",
-					"field": "e"
+					"field": "e",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "e.id",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "e.nome",
+					"type": "string"
 				}
 			],
 			"rulesGroupBy": [],
@@ -416,10 +464,13 @@
 			"rulesOrderBy": [],
 			"rules": {
 				"condition": "AND",
+				"rules": [],
 				"not": false,
-				"valid": true,
-				"rules": []
-			}
+				"valid": true
+			},
+			"isRawSql": false,
+			"multiTenant": true,
+			"paginatorAutomatic": false
 		},
 		"queryParamsValues": [],
 		"verbs": {
@@ -462,7 +513,7 @@
 	},
 	"tolpwkwbakaf": {
 		"customId": "tolpwkwbakaf",
-		"queryName": "Cliente",
+		"queryName": "ClienteAdir",
 		"screen": "src/main/webapp/views/logged/cliente.view.html",
 		"sourceType": "entityFullName",
 		"blockly": null,
@@ -470,17 +521,86 @@
 		"entityFullName": "app.entity.Cliente",
 		"query": {
 			"isValid": true,
+			"isEmpty": false,
+			"operationType": "object",
+			"type": "select",
 			"rulesEntity": [
 				{
 					"entity": "Cliente",
-					"alias": "c",
-					"namespace": "app.entity.Cliente"
+					"namespace": "app.entity.Cliente",
+					"alias": "c"
 				}
 			],
 			"rulesSelect": [
 				{
 					"func": "get",
-					"field": "c"
+					"field": "c.id",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "c.nome",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "c.nascimento",
+					"type": "date"
+				},
+				{
+					"func": "get",
+					"field": "c.tipo",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "c.estado",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "c.estado.nome",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "c.municipio",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "c.municipio.estado",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "c.municipio.id",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "c.municipio.nome",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "c.satisfacao",
+					"type": "integer"
+				},
+				{
+					"func": "get",
+					"field": "c.tipo",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "c.horaNascimento",
+					"type": "date"
+				},
+				{
+					"func": "get",
+					"field": "c.ramoAtividade",
+					"type": "string"
 				}
 			],
 			"rulesGroupBy": [],
@@ -488,10 +608,13 @@
 			"rulesOrderBy": [],
 			"rules": {
 				"condition": "AND",
+				"rules": [],
 				"not": false,
-				"valid": true,
-				"rules": []
-			}
+				"valid": true
+			},
+			"isRawSql": false,
+			"multiTenant": true,
+			"paginatorAutomatic": false
 		},
 		"queryParamsValues": [],
 		"verbs": {
@@ -531,7 +654,8 @@
 			"revendodor": null,
 			"classificacao": null,
 			"municipio": null,
-			"ramoAtividade": null
+			"ramoAtividade": null,
+			"estado": null
 		},
 		"security": {
 			"id": null,
@@ -548,14 +672,11 @@
 			"revendodor": null,
 			"classificacao": null,
 			"municipio": null,
-			"ramoAtividade": null
-		},
-		"calcFields": {
+			"ramoAtividade": null,
 			"estado": null
 		},
-		"calcFieldsSecurity": {
-			"estado": null
-		},
+		"calcFields": {},
+		"calcFieldsSecurity": {},
 		"errorHandles": {
 			"primaryKey": null,
 			"foreignKey": null
