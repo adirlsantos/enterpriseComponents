@@ -601,6 +601,11 @@
 					"func": "get",
 					"field": "c.ramoAtividade",
 					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "c.classificacao",
+					"type": "string"
 				}
 			],
 			"rulesGroupBy": [],

@@ -221,6 +221,16 @@ var app = (function() {
             ngModel.$setViewValue(evaluatedValue);
           }.bind(element));
         });
+        
+        // scope.$watch(function(){return ngModel.$modelValue}, function(value, old){
+        //   if (value !== old && !assigned) {
+        //     $(element).data('assigned', false);
+        //     var dataEvaluated = JSON.parse($(element).attr("data-evaluated"));
+        //     if (dataEvaluated == value) {
+        //       $(element).attr('checked', true);
+        //     }
+        //   }
+        // });
       }
     };
   }])
