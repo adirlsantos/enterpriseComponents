@@ -1,6 +1,7 @@
 <h3>Instrutor</h3> 
 <!-- div row para pesquisa --> 
 <!--<div class="row">--> 
+<datasource filter="" name="Instrutor" entity="api/cronapi/crud/app.entity.Instrutor" keys="id" rows-per-page="100" delete-message="Deseja remover?" class=""></datasource> 
 <div ng-hide="Instrutor.inserting || Instrutor.editing" data-component="crn-datasource-filter" id="crn-datasource-filter-general" class=""> 
   <div class="form-group"> 
     <label for="textinput-filter" class="">{{"template.crud.search" | translate}}</label> 
@@ -12,7 +13,6 @@
 </div> 
 <!-- fim div row para pesquisa --> 
 <!--</div>--> 
-<datasource filter="" name="Instrutor" entity="api/cronapi/crud/app.entity.Instrutor" keys="id" rows-per-page="100" delete-message="Deseja remover?" class=""></datasource> 
 <div class="component-holder" data-component="crn-grid" id="crn-grid-Instrutor"> 
   <div crn-datasource="Instrutor" class="" ng-hide="Instrutor.editing || Instrutor.inserting"> 
     <table class="table  table-bordered table-hover table-striped"> 
@@ -72,12 +72,12 @@
           </div> 
         </div> 
         <!-- NtoN  --> 
-        <datasource append="false" name="Curso" entity="api/cronapi/crud/app.entity.Instrutor/{{Instrutor.active.id}}/relation:curso:Curso" keys="id" rows-per-page="100" lazy="true" auto-post="true" enabled="{{Instrutor.editing || Instrutor.inserting}}" dependent-lazy-post="Instrutor" dependent-lazy-post-field="instrutor"></datasource> 
-        <datasource name="AllCurso" entity="api/cronapi/crud/app.entity.Curso" keys="id" rows-per-page="100" enabled="{{Instrutor.editing || Instrutor.inserting}}"></datasource> 
+        <datasource name="Curso" append="false" entity="iauwm6e74677" keys="id"></datasource> 
+        <datasource name="AllCurso" entity="iauwm6e74677" keys="id" rows-per-page="100"></datasource> 
         <div class="component-holder ng-binding ng-scope " data-component="crn-enterprise-combobox-multiple" ng-show="datasource.editing || datasource.inserting"> 
           <div class="form-group"> 
             <label for="select-curso">Curso</label> 
-            <cron-multi-select options="" ng-required="false" id="select-curso" ng-model="Curso.data" class="crn-select form-control" style=""><cron-options><cron-header-template>&lt;h3&gt;Cursos&lt;/h3&gt;</cron-header-template><cron-template></cron-template><cron-footer-template></cron-footer-template><cron-placeholder>Selecione os cursos..</cron-placeholder><cron-data-source><cron-id>iauwm6e74677</cron-id><cron-param-values></cron-param-values><cron-entity-full-name>app.entity.Curso</cron-entity-full-name><cron-schema-fields><cron-name>ativo</cron-name><cron-type>Boolean</cron-type><cron-nullable>true</cron-nullable><cron-key>false</cron-key></cron-schema-fields><cron-schema-fields><cron-name>id</cron-name><cron-type>String</cron-type><cron-nullable>false</cron-nullable><cron-key>true</cron-key></cron-schema-fields><cron-schema-fields><cron-name>nome</cron-name><cron-type>String</cron-type><cron-nullable>true</cron-nullable><cron-key>false</cron-key></cron-schema-fields></cron-data-source><cron-filter>contains</cron-filter><cron-data-text-field>nome</cron-data-text-field><cron-data-value-field>id</cron-data-value-field><cron-option-label></cron-option-label><cron-dynamic>true</cron-dynamic><cron-value-primitive></cron-value-primitive><cron-cascade-from></cron-cascade-from><cron-cascade-from-field></cron-cascade-from-field><cron-value-template></cron-value-template><cron-drop-down-list></cron-drop-down-list></cron-options></cron-multi-select> 
+            <cron-multi-select options="" ng-required="false" id="select-curso" ng-model="Curso.data" class="crn-select form-control" style=""><cron-options><cron-header-template>&lt;h3&gt;Cursos&lt;/h3&gt;</cron-header-template><cron-template></cron-template><cron-footer-template></cron-footer-template><cron-placeholder>Selecione os cursos..</cron-placeholder><cron-data-source><cron-id>iauwm6e74677</cron-id><cron-name>AllCurso</cron-name><cron-param-values></cron-param-values><cron-entity-full-name>app.entity.Curso</cron-entity-full-name><cron-schema-fields><cron-name>ativo</cron-name><cron-type>Boolean</cron-type><cron-nullable>true</cron-nullable><cron-key>false</cron-key></cron-schema-fields><cron-schema-fields><cron-name>id</cron-name><cron-type>String</cron-type><cron-nullable>true</cron-nullable><cron-key>true</cron-key></cron-schema-fields><cron-schema-fields><cron-name>nome</cron-name><cron-type>String</cron-type><cron-nullable>true</cron-nullable><cron-key>false</cron-key></cron-schema-fields></cron-data-source><cron-filter>contains</cron-filter><cron-data-text-field>nome</cron-data-text-field><cron-data-value-field>id</cron-data-value-field><cron-option-label></cron-option-label><cron-dynamic>true</cron-dynamic><cron-value-primitive>false</cron-value-primitive><cron-cascade-from></cron-cascade-from><cron-cascade-from-field></cron-cascade-from-field><cron-value-template></cron-value-template><cron-drop-down-list></cron-drop-down-list></cron-options></cron-multi-select> 
           </div> 
         </div> 
         <!-- NtoN  end--> 

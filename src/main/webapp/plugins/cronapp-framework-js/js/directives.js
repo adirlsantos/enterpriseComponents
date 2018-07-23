@@ -818,7 +818,7 @@
               datasourceName = attrs.crnDatasource;
             else
               datasourceName = $element.parent().attr('crn-datasource')
-            
+            debugger;
             var requiredFilter = attrs.requiredFilter && attrs.requiredFilter.toString() == "true";
             if (requiredFilter) {
               this.forceDisableDatasource(datasourceName, scope);
@@ -1529,7 +1529,7 @@
     };
   }])
   
-      app.directive('cronSelect', function ($compile) {
+  .directive('cronSelect', function ($compile) {
     return {
       restrict: 'E',
       replace: true,
@@ -1589,7 +1589,7 @@
     };
   })
   
-  app.directive('cronDynamicSelect', function ($compile) {
+  .directive('cronDynamicSelect', function ($compile) {
     return {
       restrict: 'E',
       replace: true,
@@ -1616,7 +1616,16 @@
           var $element = $(parent).find('input.cronDynamicSelect');
           $(element).remove();
           
+          options['dataBound'] = function(e) {
+            var currentValue = $(combobox).data('currentValue');
+            if (currentValue != null) {
+              setTimeout(function(){combobox.value(currentValue)},300);
+            }
+            $(combobox).data('currentValue', null);
+          };                   
+          
           var combobox = $element.kendoDropDownList(options).data('kendoDropDownList');
+          combobox.dataSource.transport.options.grid = combobox;
           var _scope = scope;
           var _ngModelCtrl = ngModelCtrl;
           
@@ -1644,8 +1653,14 @@
                 }
               }
               
-              combobox.value(result);
-            
+              $(combobox).data('currentValue', result);
+              view = combobox.dataSource.view();
+              if (!view || (Array.isArray(view) && view.length == 0)) {
+                combobox.dataSource.read();
+              } else {
+                combobox.value(result);
+              }
+              
               return result;
             });
   
@@ -1706,7 +1721,6 @@
           $(parent).append('<input style="width: 100%;"' + id + name + ' class="cronMultiSelect" ng-model="' + attrs.ngModel + '"/>');
           var $element = $(parent).find('input.cronMultiSelect');
           $(element).remove();
-
           var combobox = $element.kendoMultiSelect(options).data('kendoMultiSelect');
           
           $(element).on('change', function (event) {
@@ -2134,8 +2148,8 @@
         });
       }
     }
-  })  
-
+  })
+  
 }(app));
 
 function maskDirectiveAsDate($compile, $translate) {

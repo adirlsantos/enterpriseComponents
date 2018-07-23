@@ -180,17 +180,26 @@
 		"entityFullName": "app.entity.RamoAtividade",
 		"query": {
 			"isValid": true,
+			"isEmpty": false,
+			"operationType": "object",
+			"type": "select",
 			"rulesEntity": [
 				{
 					"entity": "RamoAtividade",
-					"alias": "r",
-					"namespace": "app.entity.RamoAtividade"
+					"namespace": "app.entity.RamoAtividade",
+					"alias": "r"
 				}
 			],
 			"rulesSelect": [
 				{
 					"func": "get",
-					"field": "r"
+					"field": "r.id",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "r.nome",
+					"type": "string"
 				}
 			],
 			"rulesGroupBy": [],
@@ -198,10 +207,13 @@
 			"rulesOrderBy": [],
 			"rules": {
 				"condition": "AND",
+				"rules": [],
 				"not": false,
-				"valid": true,
-				"rules": []
-			}
+				"valid": true
+			},
+			"isRawSql": false,
+			"multiTenant": true,
+			"paginatorAutomatic": false
 		},
 		"queryParamsValues": [],
 		"verbs": {
@@ -243,7 +255,7 @@
 		"serviceUrl": "api/cronapi/query/h85cntnc0j79/"
 	},
 	"h7qzj5dj4a46": {
-		"customId": "h7qzj5dj4a46",
+		"customId": "municipios",
 		"queryName": "Municipios",
 		"screen": "",
 		"sourceType": "entityFullName",
@@ -263,16 +275,6 @@
 				}
 			],
 			"rulesSelect": [
-				{
-					"func": "get",
-					"field": "m",
-					"type": "string"
-				},
-				{
-					"func": "get",
-					"field": "m.estado",
-					"type": "string"
-				},
 				{
 					"func": "get",
 					"field": "m.estado.id",
@@ -349,7 +351,7 @@
 		"serviceUrl": "api/cronapi/query/h7qzj5dj4a46/"
 	},
 	"iauwm6e74677": {
-		"customId": "iauwm6e74677",
+		"customId": "cursos",
 		"queryName": "Cursos",
 		"screen": "",
 		"sourceType": "entityFullName",
@@ -358,17 +360,31 @@
 		"entityFullName": "app.entity.Curso",
 		"query": {
 			"isValid": true,
+			"isEmpty": false,
+			"operationType": "object",
+			"type": "select",
 			"rulesEntity": [
 				{
 					"entity": "Curso",
-					"alias": "c",
-					"namespace": "app.entity.Curso"
+					"namespace": "app.entity.Curso",
+					"alias": "c"
 				}
 			],
 			"rulesSelect": [
 				{
 					"func": "get",
-					"field": "c"
+					"field": "c.ativo",
+					"type": "boolean"
+				},
+				{
+					"func": "get",
+					"field": "c.id",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "c.nome",
+					"type": "string"
 				}
 			],
 			"rulesGroupBy": [],
@@ -376,10 +392,13 @@
 			"rulesOrderBy": [],
 			"rules": {
 				"condition": "AND",
+				"rules": [],
 				"not": false,
-				"valid": true,
-				"rules": []
-			}
+				"valid": true
+			},
+			"isRawSql": false,
+			"multiTenant": true,
+			"paginatorAutomatic": false
 		},
 		"queryParamsValues": [],
 		"verbs": {
@@ -423,7 +442,7 @@
 		"serviceUrl": "api/cronapi/query/iauwm6e74677/"
 	},
 	"qec3xixpe0xk": {
-		"customId": "qec3xixpe0xk",
+		"customId": "estados",
 		"queryName": "Estados",
 		"screen": "",
 		"sourceType": "entityFullName",
@@ -443,11 +462,6 @@
 				}
 			],
 			"rulesSelect": [
-				{
-					"func": "get",
-					"field": "e",
-					"type": "string"
-				},
 				{
 					"func": "get",
 					"field": "e.id",
@@ -549,11 +563,6 @@
 				},
 				{
 					"func": "get",
-					"field": "c.tipo",
-					"type": "string"
-				},
-				{
-					"func": "get",
 					"field": "c.estado",
 					"type": "string"
 				},
@@ -565,16 +574,6 @@
 				{
 					"func": "get",
 					"field": "c.municipio",
-					"type": "string"
-				},
-				{
-					"func": "get",
-					"field": "c.municipio.estado",
-					"type": "string"
-				},
-				{
-					"func": "get",
-					"field": "c.municipio.id",
 					"type": "string"
 				},
 				{
@@ -687,5 +686,89 @@
 			"foreignKey": null
 		},
 		"serviceUrl": "api/cronapi/query/tolpwkwbakaf/"
+	},
+	"qec5f4ki0cog": {
+		"customId": "instrutores",
+		"queryName": "Instrutores",
+		"screen": "",
+		"sourceType": "entityFullName",
+		"blockly": null,
+		"entitySimpleName": "Instrutor",
+		"entityFullName": "app.entity.Instrutor",
+		"query": {
+			"isValid": true,
+			"isEmpty": false,
+			"operationType": "object",
+			"type": "select",
+			"rulesEntity": [
+				{
+					"entity": "Instrutor",
+					"namespace": "app.entity.Instrutor",
+					"alias": "i"
+				}
+			],
+			"rulesSelect": [
+				{
+					"func": "get",
+					"field": "i.id",
+					"type": "string"
+				},
+				{
+					"func": "get",
+					"field": "i.nome",
+					"type": "string"
+				}
+			],
+			"rulesGroupBy": [],
+			"rulesHaving": [],
+			"rulesOrderBy": [],
+			"rules": {
+				"condition": "AND",
+				"rules": [],
+				"not": false,
+				"valid": true
+			},
+			"isRawSql": false,
+			"multiTenant": true,
+			"paginatorAutomatic": false
+		},
+		"queryParamsValues": [],
+		"verbs": {
+			"GET": true,
+			"GETAuthorities": null,
+			"POST": true,
+			"POSTAuthorities": null,
+			"PUT": true,
+			"PUTAuthorities": null,
+			"DELETE": true,
+			"DELETEAuthorities": null,
+			"FILTER": true,
+			"FILTERAuthorities": null
+		},
+		"events": {
+			"beforeInsert": null,
+			"beforeUpdate": null,
+			"beforeDelete": null,
+			"afterInsert": null,
+			"afterUpdate": null,
+			"afterDelete": null,
+			"onNavigate": null,
+			"onGetData": null
+		},
+		"defaultValues": {
+			"id": null,
+			"nome": null
+		},
+		"security": {
+			"id": null,
+			"nome": null
+		},
+		"calcFields": {},
+		"calcFieldsSecurity": {},
+		"errorHandles": {
+			"primaryKey": null,
+			"foreignKey": null
+		},
+		"serviceUrl": "api/cronapi/query/qec5f4ki0cog/"
 	}
 }
