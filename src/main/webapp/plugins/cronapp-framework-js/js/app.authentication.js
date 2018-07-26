@@ -365,8 +365,8 @@ app.kendoHelper = {
   generateId: function() {
     var numbersOnly = '0123456789';
     var result = Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
+    .toString(16)
+    .substring(1);
     if (numbersOnly.indexOf(result.substr(0,1)) > -1)
       return this.generateId();
     return result;
@@ -378,7 +378,7 @@ app.kendoHelper = {
       { kendoType: "date", entityType: ["date", "time", "datetime"] },
       { kendoType: "boolean", entityType: ["boolean"] }
     ];
-    
+
     var parseType = function(type) {
       for (var i = 0; i < parseAttribute.length; i++) {
         if (parseAttribute[i].entityType.includes(type.toLocaleLowerCase()))
@@ -386,8 +386,8 @@ app.kendoHelper = {
       }
       return "string";
     };
-   
-    var schema = { 
+
+    var schema = {
       model : {
         id : undefined,
         fields: {}
@@ -407,40 +407,42 @@ app.kendoHelper = {
     }
     return schema;
   },
-
-getDataSource: function(dataSource, scope, allowPaging, pageCount, columns) {
+  getDataSource: function(dataSource, scope, allowPaging, pageCount, columns) {
     var schema = this.getSchema(dataSource);
-    
+
     var parseParameter = function(data) {
       for (var attr in data) {
         if (schema.model.fields.hasOwnProperty(attr)) {
-          
-          var schemaField = schema.model.fields[attr]; 
+
+          var schemaField = schema.model.fields[attr];
           if (schemaField.type == 'string' && data[attr] != undefined)
             data[attr] = data[attr] + "";
           else if (schemaField.type == 'number' && data[attr] != undefined)
             data[attr] = parseFloat(data[attr]);
           else if (schemaField.type == 'date' && data[attr] != undefined)
             data[attr] = '/Date('+data[attr].getTime()+')/';
-          else if (schemaField.type == 'boolean' && data[attr] != undefined)
-            data[attr] = data[attr].toString().toLowerCase() == "true"?true:false;
-            
+          else if (schemaField.type == 'boolean') {
+            if (data[attr] == undefined)
+              data[attr] = false;
+            else
+              data[attr] = data[attr].toString().toLowerCase() == "true"?true:false;
+          }
+
           //Significa que é o ID
           if (schema.model.id == attr) {
             //Se o mesmo for vazio, remover do data
             if (data[attr] != undefined && data[attr].toString().length == 0)
               delete data[attr];
-          }  
+          }
         }
       }
       return data;
     };
-    
-    var pageSize = pageCount;
-    //Se permitir paginar, coloca quantidade default de registros, caso n tenha
-    if (allowPaging)
-      pageSize = pageCount ? pageCount : 10;
-    
+
+    var pageSize = 10;
+    if (scope[dataSource.name])
+      pageSize = scope[dataSource.name].rowsPerPage;
+
     //Quando não for data UTC
     var offsetMiliseconds = new Date().getTimezoneOffset() * 60000;
     function onRequestEnd(e) {
@@ -450,9 +452,9 @@ getDataSource: function(dataSource, scope, allowPaging, pageCount, columns) {
           items = e.response.d.results;
         else
           items = [e.response.d];
-        
+
         if (this.group().length) {
-          
+
           columns.forEach( function(c) {
             if (c.dataType == 'Database') {
               var notUseUTC = c.type == 'datetime-local' || c.type == 'month' || c.type == 'time-local' || c.type == 'week';
@@ -461,7 +463,7 @@ getDataSource: function(dataSource, scope, allowPaging, pageCount, columns) {
                   var gr = items[i];
                   if (c.field == gr.Member) {
                     gr.Key = gr.Key.replace(/\d+/,
-                      function (n) { return parseInt(n) + offsetMiliseconds }
+                        function (n) { return parseInt(n) + offsetMiliseconds }
                     );
                   }
                   addOffset.bind(this)(gr.Items);
@@ -474,24 +476,24 @@ getDataSource: function(dataSource, scope, allowPaging, pageCount, columns) {
         }
       }
     }
-    
+
     function addOffset(items) {
       for (var i = 0; i < items.length; i++) {
         if (columns) {
           columns.forEach( function(c) {
-              if (c.dataType == 'Database') {
-                var notUseUTC = c.type == 'datetime-local' || c.type == 'month' || c.type == 'time-local' || c.type == 'week';
-                if (notUseUTC) {
-                  if (items[i][c.field]) {
-                    items[i][c.field] = items[i][c.field].replace(/\d+/,
+            if (c.dataType == 'Database') {
+              var notUseUTC = c.type == 'datetime-local' || c.type == 'month' || c.type == 'time-local' || c.type == 'week';
+              if (notUseUTC) {
+                if (items[i][c.field]) {
+                  items[i][c.field] = items[i][c.field].replace(/\d+/,
                       function (n) { return parseInt(n) + offsetMiliseconds }
-                    );
-                  }
+                  );
                 }
               }
-          });  
+            }
+          });
         }
-        
+
       }
     }
 
@@ -500,75 +502,100 @@ getDataSource: function(dataSource, scope, allowPaging, pageCount, columns) {
       transport: {
         setActiveAndPost: function(e) {
           var cronappDatasource = this.options.cronappDatasource;
-          cronappDatasource.active = parseParameter(e.data);
+          cronappDatasource.updateActive(parseParameter(e.data));
           cronappDatasource.active.__sender = datasourceId;
-          //Removendo a chave gerada temporaria (somente em modo de inserção)
-          if (datasource.schema.model.id && cronappDatasource.active["_generated" + datasource.schema.model.id]) {
-            cronappDatasource.active[datasource.schema.model.id] = e.data["_generated" + datasource.schema.model.id];
-            delete cronappDatasource.active["_generated" + datasource.schema.model.id];
-          }
-          cronappDatasource.postSilent(function(data) {
-            this.options.enableAndSelect(e);
-            e.success(data);
-            // e.error("XHR response", "status code", "error message");
-          }.bind(this));
-          
+          cronappDatasource.postSilent(
+              function(data) {
+                this.options.enableAndSelect(e);
+                e.success(data);
+              }.bind(this),
+              function(data) {
+                this.options.enableAndSelect(e);
+                e.error(data, data, data);
+              }.bind(this)
+          );
         },
         push: function(callback) {
+          //TODO: Colocar o datasource para receber uma lista de callback ao inves de setar,
+          //tem que ser push
           this.options.cronappDatasource.setDataSourceEvents({
             create: function(data) {
               if (data.__sender != datasourceId)
-                callback.pushCreate(data);  
+                callback.pushCreate(data);
             }.bind(this),
             update: function(data) {
               if (data.__sender != datasourceId)
-                callback.pushUpdate(data);  
+                callback.pushUpdate(data);
             }.bind(this),
             delete: function(data) {
               if (data.__sender != datasourceId)
                 callback.pushDestroy(data);
             }.bind(this),
-            refresh: function(data) {
+            overRideRefresh: function(data) {
               if (this.options.grid)
                 this.options.grid.dataSource.read();
-                // this.options.grid.dataSource.filter(null);
+            }.bind(this),
+            read: function(data) {
+              this.options.fromRead = true;
+              this.options.grid.dataSource.read();
             }.bind(this)
           });
         },
         read:  function (e) {
-          for (key in e.data) 
-            if(e.data[key] == undefined)  
-              delete e.data[key];
-          var paramsOData = kendo.data.transports.odata.parameterMap(e.data, 'read');
-          var orderBy = '';
-          
-          if (this.options.grid) {
-            this.options.grid.dataSource.group().forEach(function(group) { 
-              orderBy += group.field +" " + group.dir + ","; 
+
+          var doFetch = false;
+          try {
+            var cronappDatasource = this.options.cronappDatasource;
+
+            if (!this.options.kendoCallback) {
+              this.options.kendoCallback = e;
+              e.success(cronappDatasource.data);
+            } else {
+              if (this.options.fromRead) {
+                this.options.kendoCallback.success(cronappDatasource.data);
+              } else {
+                doFetch = true;
+              }
+            }
+          } finally {
+            this.options.fromRead = false;
+          }
+
+          if (doFetch) {
+            for (key in e.data)
+              if(e.data[key] == undefined)
+                delete e.data[key];
+            var paramsOData = kendo.data.transports.odata.parameterMap(e.data, 'read');
+            var orderBy = '';
+
+            if (this.options.grid) {
+              this.options.grid.dataSource.group().forEach(function(group) {
+                orderBy += group.field +" " + group.dir + ",";
+              });
+            }
+            if (orderBy.length > 0) {
+              orderBy = orderBy.substr(0, orderBy.length-1);
+              if (paramsOData.$orderby)
+                paramsOData.$orderby =  orderBy + "," + paramsOData.$orderby;
+              else
+                paramsOData.$orderby = orderBy;
+            }
+
+            var cronappDatasource = this.options.cronappDatasource;
+            cronappDatasource.rowsPerPage = e.data.pageSize;
+            cronappDatasource.offset = (e.data.page - 1);
+            var fetchData = {};
+            fetchData.params = paramsOData;
+            cronappDatasource.fetch(fetchData, {
+              success:  function(data) {
+                e.success(data);
+              },
+              canceled:  function(data) {
+                e.error("canceled", "canceled", "canceled");
+              }
             });
           }
-          if (orderBy.length > 0) {
-            orderBy = orderBy.substr(0, orderBy.length-1);
-            if (paramsOData.$orderby)
-              paramsOData.$orderby =  orderBy + "," + paramsOData.$orderby;
-            else
-              paramsOData.$orderby = orderBy;
-          }
-          
-          var cronappDatasource = this.options.cronappDatasource;
-          cronappDatasource.rowsPerPage = e.data.pageSize;
-          cronappDatasource.offset = (e.data.page - 1);
-          var fetchData = {};
-          fetchData.params = paramsOData;
-          cronappDatasource.fetch(fetchData, { 
-            success:  function(data) {
-             e.success(data);
-            },
-            canceled:  function(data) {
-             e.error("canceled", "canceled", "canceled");
-            }
-          });
-          
+
         },
         update: function(e) {
           this.setActiveAndPost(e);
@@ -578,25 +605,35 @@ getDataSource: function(dataSource, scope, allowPaging, pageCount, columns) {
         },
         destroy: function(e) {
           cronappDatasource = this.options.cronappDatasource;
-          cronappDatasource.removeSilent(e.data, function(data) {
-            e.success(data);
-          });  
+          cronappDatasource.removeSilent(e.data,
+              function(data) {
+                e.success(data);
+              },
+              function(data) {
+                e.error("canceled", "canceled", "canceled");
+              }
+          );
         },
         batch: function (e) {
         },
         options: {
+          fromRead: false,
           disableAndSelect: function(e) {
-            this.grid.select(e.container);
-            this.grid.options.selectable = false;
-            if (this.grid.selectable && this.grid.selectable.element) {
-              this.grid.selectable.destroy();
-              this.grid.selectable = null;
+            if (this.grid) {
+              this.grid.select(e.container);
+              this.grid.options.selectable = false;
+              if (this.grid.selectable && this.grid.selectable.element) {
+                this.grid.selectable.destroy();
+                this.grid.selectable = null;
+              }
             }
           },
           enableAndSelect: function(e) {
-            this.grid.options.selectable = "row";
-            this.grid._selectable();
-            this.grid.select(e.container);
+            if (this.grid) {
+              this.grid.options.selectable = "row";
+              this.grid._selectable();
+              this.grid.select(e.container);
+            }
           },
           cronappDatasource: scope[dataSource.name]
         }
@@ -609,132 +646,11 @@ getDataSource: function(dataSource, scope, allowPaging, pageCount, columns) {
       schema: schema,
       requestEnd: onRequestEnd
     };
-    
+
     datasource.schema.total = function(){
       return datasource.transport.options.cronappDatasource.getRowsCount();
     };
-    
-    
-    /*
-    
-    delete datasource.type;
-            datasource.schema.total = function(){
-              return datasource.transport.options.cronappDatasource.getRowsCount();
-            };
-            var datasourceId = this.generateId();
-            datasource.transport = {
-              
-              setActiveAndPost: function(e) {
-                
-                var cronappDatasource = this.options.cronappDatasource;
-                cronappDatasource.active = e.data;
-                cronappDatasource.active.__sender = datasourceId;
-                //Removendo a chave gerada temporaria (somente em modo de inserção)
-                if (datasource.schema.model.id && cronappDatasource.active["_generated" + datasource.schema.model.id]) {
-                  cronappDatasource.active[datasource.schema.model.id] = e.data["_generated" + datasource.schema.model.id];
-                  delete cronappDatasource.active["_generated" + datasource.schema.model.id];
-                }
-                
-                cronappDatasource.postSilent(function(data) {
-                  this.options.enableAndSelect(e);
-                  e.success(data);
-                  // e.error("XHR response", "status code", "error message");
-                }.bind(this));
-                
-              },
-              push: function(callback) {
-                this.options.cronappDatasource.setDataSourceEvents({
-                  create: function(data) {
-                    if (data.__sender != datasourceId)
-                      callback.pushCreate(data);  
-                  }.bind(this),
-                  update: function(data) {
-                    if (data.__sender != datasourceId)
-                      callback.pushUpdate(data);  
-                  },
-                  delete: function(data) {
-                    if (data.__sender != datasourceId)
-                      callback.pushDestroy(data);
-                  }
-                });
-              },
-              read:  function (e) {
-                for (key in e.data) 
-                  if(e.data[key] == undefined)  
-                    delete e.data[key];
-                var paramsOData = kendo.data.transports.odata.parameterMap(e.data, 'read');
-                
-                var cronappDatasource = this.options.cronappDatasource;
-                cronappDatasource.rowsPerPage = e.data.pageSize;
-                cronappDatasource.offset = (e.data.page - 1);
-                var fetchData = {};
-                fetchData.params = paramsOData;
-                cronappDatasource.fetch(fetchData, { success:  function(data) {
-                  e.success(data);
-                }});
-                
-              },
-              update: function(e) {
-                this.setActiveAndPost(e);
-              },
-              create: function (e) {
-                this.setActiveAndPost(e);
-              },
-              destroy: function(e) {
-                cronappDatasource = this.options.cronappDatasource;
-                cronappDatasource.removeSilent(e.data, function(data) {
-                  e.success(data);
-                });  
-              },
-              batch: function (e) {
-              },
-              parameterMap: function (data, type) {
-                if (type == "read") {
-                  var paramsOData = kendo.data.transports.odata.parameterMap(data, type);
-                  
-                  var orderBy = '';
-                  if (this.options.grid) {
-                    this.options.grid.dataSource.group().forEach(function(group) { 
-                      orderBy += group.field +" " + group.dir + ","; 
-                    });
-                  }
-                  if (orderBy.length > 0) {
-                    orderBy = orderBy.substr(0, orderBy.length-1);
-                    if (paramsOData.$orderby)
-                      paramsOData.$orderby =  orderBy + "," + paramsOData.$orderby;
-                    else
-                      paramsOData.$orderby = orderBy;
-                  }
-                  return paramsOData;
-                }
-                else 
-                  data = parseParameter(data);
-                
-                return kendo.stringify(data);
-              },
-              options: {
-                disableAndSelect: function(e) {
-                  this.grid.select(e.container);
-                  this.grid.options.selectable = false;
-                  if (this.grid.selectable && this.grid.selectable.element) {
-                    this.grid.selectable.destroy();
-                    this.grid.selectable = null;
-                  }
-                },
-                enableAndSelect: function(e) {
-                  this.grid.options.selectable = "row";
-                  this.grid._selectable();
-                  this.grid.select(e.container);
-                },
-                cronappDatasource: scope[options.dataSource.name]
-              }
-            };
-    
-    */
-    
-      
     return datasource;
-    
   },
   getConfigCombobox: function(options, scope) {
     var dataSource = {};
@@ -784,17 +700,19 @@ getDataSource: function(dataSource, scope, allowPaging, pageCount, columns) {
       }
 
       var formatKendoMask = function(mask) {
-        mask = mask.replace(/:MM/gm,':mm');
-        mask = mask.replace(/:M/gm,':m');
-        mask = mask.replace(/S/gm,'s');
-        mask = mask.replace(/D/gm,'d');
-        mask = mask.replace(/Y/gm,'y');
+        if (mask) {
+          mask = mask.replace(/:MM/gm,':mm');
+          mask = mask.replace(/:M/gm,':m');
+          mask = mask.replace(/S/gm,'s');
+          mask = mask.replace(/D/gm,'d');
+          mask = mask.replace(/Y/gm,'y');
+        }
 
         return mask;
       }
 
       var formatMomentMask = function(type, mask) {
-        if (!mask) {
+        if (mask == null) {
           mask = parseMaskType(type, translate)
         }
         
@@ -813,7 +731,7 @@ getDataSource: function(dataSource, scope, allowPaging, pageCount, columns) {
       var momentFormat = formatMomentMask(options.type, options.format);
       var format = formatKendoMask(momentFormat);
       
-      var timeFormat = formatKendoMask("time", options.timeFormat);
+      var timeFormat = formatKendoMask(options.timeFormat);
       var culture = formatCulture(translate.use());
       
       config = {
@@ -899,8 +817,8 @@ getDataSource: function(dataSource, scope, allowPaging, pageCount, columns) {
   },
   getConfigSwitch: function(options) {
     var config = {
-      onLabel: options.onLabel,
-      offLabel: options.offLabel
+      onLabel: (options.onLabel == null ? undefined : options.onLabel),
+      offLabel: (options.offLabel == null ? undefined : options.offLabel)
     }
 
     return config;

@@ -1,5 +1,7 @@
+//v2.0.0
 var ISO_PATTERN  = new RegExp("(\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d\\.\\d+([+-][0-2]\\d:[0-5]\\d|Z))|(\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z))|(\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z))");
 var TIME_PATTERN  = new RegExp("PT(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)(?:\\.(\\d+)?)?S)?");
+var DEP_PATTERN  = new RegExp("\\{\\{(.*?)\\|raw\\}\\}");
 
 angular.module('datasourcejs', [])
 
@@ -50,7 +52,7 @@ angular.module('datasourcejs', [])
         this.links = null;
         this.loadedFinish = null;
         this.lastFilterParsed = null;
-        this.rowsCount = 0;
+        this.rowsCount = -1;
         this.events = {};
 
         this.busy = false;
@@ -62,6 +64,8 @@ angular.module('datasourcejs', [])
         this.dependentBufferLazyPostData = null; //TRM
         this.lastAction = null; //TRM
         this.dependentData = null; //TRM
+        this.hasMemoryData = false;
+        this.batchPost= false;
         this.caseInsensitive = null;
         this.terms = null;
         this.checkRequired = true;
@@ -98,6 +102,7 @@ angular.module('datasourcejs', [])
                 var fields = {};
 
                 var _callback;
+                var _callbackError;
                 _self.busy = true;
                 url = url.replace('/specificSearch', '');
                 url = url.replace('/generalSearch', '');
@@ -161,11 +166,26 @@ angular.module('datasourcejs', [])
                 }
               }).error(function(data, status, headers, config) {
                 _self.busy = false;
-                _self.handleError(isCronapiQuery&&data.value?data.value:data);
+                var msg;
+                if (_self.isOData()) {
+                  msg = data.error.message.value;
+                } else {
+                  msg = isCronapiQuery&&data.value?data.value:data
+                }
+                _self.handleError(msg);
+                if (_callbackError) {
+                  _callbackError(msg);
+                }
               });
 
               this.$promise.then = function(callback) {
                 _callback = callback;
+                return this;
+              }
+
+              this.$promise.error = function(callback) {
+                _callbackError = callback;
+                return this;
               }
               return this;
             }
@@ -376,18 +396,19 @@ angular.module('datasourcejs', [])
         /**
          * Append a new value to the end of this dataset.
          */
-        this.insert = function(obj, callback, forceSave) {
+        this.insert = function(obj, onSuccess, onError, forceSave) {
           if (this.handleBeforeCallBack(this.onBeforeCreate)) {
             //Check if contains dependentBy, if contains, only store in data TRM
-            if (this.dependentLazyPost && !forceSave) {
+            if ((this.dependentLazyPost || this.batchPost) && !forceSave) {
               obj.__status = 'inserted';
               obj.__tempId = Math.round(Math.random()*999999);
+              this.hasMemoryData = true;
 
-              if (callback)
-                callback(obj);
+              if (onSuccess)
+                onSuccess(obj);
 
             } else {
-              service.save(obj).$promise.then(callback);
+              service.save(obj).$promise.error(onError).then(onSuccess);
             }
           }
         };
@@ -398,6 +419,11 @@ angular.module('datasourcejs', [])
          * Append a datasource to be notify when has a post or cancel
          */
         this.addDependentDatasource = function(dts) {
+          if (!this.children)
+            this.children = [];
+
+          this.children.push(dts);
+
           if (this.dependentLazyPost) {
             eval(this.dependentLazyPost).addDependentDatasource(dts);
           } else {
@@ -407,12 +433,14 @@ angular.module('datasourcejs', [])
           }
         }
 
-        this.updateObjectAtIndex = function(obj, idx) {
-          this.copy(obj, this.data[idx]);
-          delete this.data[idx].__status;
-          delete this.data[idx].__tempId;
-          delete this.data[idx].__original;
-          delete this.data[idx].__originalIdx;
+        this.updateObjectAtIndex = function(obj, data, idx) {
+          data = data || this.data;
+
+          this.copy(obj, data[idx]);
+          delete data[idx].__status;
+          delete data[idx].__tempId;
+          delete data[idx].__original;
+          delete data[idx].__originalIdx;
         }
 
         this.cleanDependentBuffer = function() {
@@ -439,33 +467,142 @@ angular.module('datasourcejs', [])
 
           if (this.postDeleteData) {
             for (var i=0;i<this.postDeleteData.length;i++) {
-              newData.push(this.postDeleteData[i]);
+              delete this.postDeleteData[i].__status;
+              delete this.postDeleteData[i].__tempId;
+              delete this.postDeleteData[i].__original;
+              delete this.postDeleteData[i].__originalIdx;
+              this.data.push(this.postDeleteData[i]);
             }
           }
 
           if (this.data && this.data.length > 0) {
             this.cursor = 0;
+            this.active = this.data[0];
           } else {
             this.cursor = -1;
+            this.active = null;
           }
 
           this.busy = false;
           this.editing = false;
           this.inserting = false;
           this.postDeleteData = null;
+          this.hasMemoryData = false;
+
+          if (this.events.read) {
+            this.callDataSourceEvents('read', this.data);
+          }
         }
 
-        this.storeDependentBuffer = function() {
+        this.cancelBatchData = function(callback) {
+          if (this.dependentData) {
+            $(this.dependentData.reverse()).each(function() {
+              this.cleanDependentBuffer();
+            });
+          }
+
+          this.cleanDependentBuffer();
+          if (callback) {
+            callback();
+          }
+        }
+
+        this.flushDependencies = function(callback) {
+          if (this.dependentData) {
+            reduce(this.dependentData, function(item, resolve) {
+              item.storeDependentBuffer(function() {
+                resolve();
+              });
+            }.bind(this), function() {
+              if (callback) {
+                callback();
+              }
+            }.bind(this))
+          } else {
+            if (callback) {
+              callback();
+            }
+          }
+        }
+
+        this.postBatchData = function(callback) {
+          this.storeDependentBuffer(function() {
+            if (this.dependentData) {
+              reduce(this.dependentData, function(item, resolve) {
+                item.storeDependentBuffer(function() {
+                  resolve();
+                });
+              }.bind(this), function() {
+                if (callback) {
+                  callback();
+                }
+              }.bind(this))
+            } else {
+              if (callback) {
+                callback();
+              }
+            }
+          }.bind(this));
+
+        }
+
+        var reduce = function (array, func, callback) {
+          if (array.length == 0) {
+            callback();
+          } else {
+            var requests = array.reduce(function (promiseChain, item) {
+
+              return promiseChain.then(function () {
+                return new Promise(function (resolve) {
+                  func(item, resolve);
+                })
+              });
+            }, Promise.resolve());
+
+            requests.then(function () {
+              callback();
+            });
+          }
+        }
+
+        this.storeDependentBuffer = function(callback) {
           var _self = this;
           var dependentDS = eval(_self.dependentLazyPost);
 
-          $(_self.data).each(function() {
+          if (this.batchPost) {
+            dependentDS = this;
+          }
 
-            if (this.__status) {
+          var array = [];
+
+          array = array.concat(_self.data);
+
+          if (_self.memoryData) {
+            for (key in _self.memoryData) {
+              if (_self.memoryData.hasOwnProperty(key)) {
+                var mem = _self.memoryData[key];
+                for (var x=0;x<mem.data.length;x++) {
+                  /*if (mem.data[x].parentData) {
+                    mem.data[x].__parentData = mem.parentData;
+                  }
+                  mem.data[x].__fromMemory = true;*/
+                }
+                array = array.concat(mem.data);
+              }
+            }
+          }
+
+          if (_self.postDeleteData) {
+            array = array.concat(_self.postDeleteData);
+          }
+
+          var func = function (item, resolve) {
+
+            if (item.__status) {
 
               if (!_self.parameters) {
                 if (_self.dependentLazyPostField) {
-                  this[_self.dependentLazyPostField] = dependentDS.active;
+                  item[_self.dependentLazyPostField] = dependentDS.active;
                 }
 
                 if (_self.entity.indexOf('//') > -1) {
@@ -481,73 +618,106 @@ angular.module('datasourcejs', [])
                 }
               }
 
-              if (_self.parameters) {
+              //TODO: Em andamento
+              /*if (_self.parameters) {
                 var params = _self.getParametersMap();
                 for (var key in params) {
                   if (params.hasOwnProperty(key)) {
-                    updateObjectValue(this, key, params[key]);
+                    updateObjectValue(item, key, params[key]);
                   }
                 }
-              }
+              }*/
 
-
-              if (this.__status == "inserted") {
+              if (item.__status == "inserted") {
                 (function (oldObj) {
                   _self.insert(oldObj, function (newObj) {
-                    var idx = _self.getIndexOfListTempBuffer(oldObj);
-                    _self.updateObjectAtIndex(newObj, idx);
-                    if (_self.events.create) {
-                      _self.events.create(newObj);
+                    var sender = oldObj.__sender;
+                    var idx = _self.getIndexOfListTempBuffer(oldObj, array);
+                    if (idx >= 0) {
+                      _self.updateObjectAtIndex(newObj, array, idx);
                     }
+                    if (_self.events.create) {
+                      if (sender) {
+                        newObj.__sender = sender;
+                      }
+                      _self.callDataSourceEvents('create', newObj);
+                      delete newObj.__sender;
+                    }
+                    resolve();
+                  }, function () {
+                    resolve();
                   }, true);
-                })(this);
+                })(item);
               }
 
-              else if (this.__status == "updated") {
+              else if (item.__status == "updated") {
                 (function (oldObj) {
                   _self.update(oldObj, function (newObj) {
-                    var idx = _self.getIndexOfListTempBuffer(oldObj);
-                    _self.updateObjectAtIndex(newObj, idx);
-                    if (_self.events.update) {
-                      _self.events.update(newObj);
+                    var sender = oldObj.__sender;
+                    var idx = _self.getIndexOfListTempBuffer(oldObj, array);
+                    if (idx >= 0) {
+                      _self.updateObjectAtIndex(newObj, array, idx);
                     }
+                    if (_self.events.update) {
+                      if (sender) {
+                        newObj.__sender = sender;
+                      }
+                      _self.callDataSourceEvents('update', newObj);
+                      delete newObj.__sender;
+                    }
+                    resolve();
+                  }, function () {
+                    resolve();
                   }, true);
-                })(this);
+                })(item);
               }
+
+              else if (item.__status == "deleted") {
+                (function (oldObj) {
+                  _self.remove(oldObj, function () {
+                    if (_self.events.delete) {
+                      var param = {};
+                      _self.copy(oldObj, param);
+                      delete param.__status;
+                      delete param.__tempId;
+                      delete param.__original;
+                      delete param.__originalIdx;
+                      _self.callDataSourceEvents('delete', param);
+                      resolve();
+                    }
+                  }, true, null, function() {
+                    resolve();
+                  });
+                })(item);
+              }
+
+              else {
+                resolve();
+              }
+            } else {
+              resolve();
             }
-          });
+          };
 
-          if (this.postDeleteData) {
-            $(this.postDeleteData).each(function() {
-              (function (oldObj) {
-                _self.remove(oldObj, function() {
-                  if (_self.events.delete) {
-                    var param = {};
-                    _self.copy(oldObj, param);
-                    delete param.__status;
-                    delete param.__tempId;
-                    delete param.__original;
-                    delete param.__originalIdx;
-                    _self.events.delete(param);
-                  }
-                }, true);
-              })(this);
-            });
-          }
-          this.busy = false;
-          this.editing = false;
-          this.inserting = false;
-          this.postDeleteData = null;
+          reduce(array, func, function () {
+            this.busy = false;
+            this.editing = false;
+            this.inserting = false;
+            this.postDeleteData = null;
+            this.hasMemoryData = false;
+            if (callback) {
+              callback();
+            }
+          }.bind(this));
         }
-
-        //TRM
 
         /**
          * Find object in list by tempBufferId
          */
-        this.getIndexOfListTempBuffer = function(obj) {
-          for (var i = 0; i < this.data.length; i++) {
-            if (this.data[i].__tempId && obj.__tempId && this.data[i].__tempId == obj.__tempId) {
+        this.getIndexOfListTempBuffer = function(obj, data) {
+          data = data || this.data;
+          for (var i = 0; i < data.length; i++) {
+            if (data[i].__tempId && obj.__tempId && data[i].__tempId == obj.__tempId) {
               return i;
             }
           }
@@ -583,14 +753,14 @@ angular.module('datasourcejs', [])
         /**
          * Uptade a value into this dataset by using the dataset key to compare the objects.
          */
-        this.update = function(obj, callback, forceUpdate) {
+        this.update = function(obj, onSuccess, onError, forceUpdate) {
 
           if (this.handleBeforeCallBack(this.onBeforeUpdate)) {
-            if (this.dependentLazyPost && !forceUpdate) {
-              if (callback)
-                callback(obj);
+            if ((this.dependentLazyPost || this.batchPost) && !forceUpdate) {
+              if (onSuccess)
+                onSuccess(obj);
             } else {
-              service.update(this.getEditionURL(forceUpdate), obj).$promise.then(callback);
+              service.update(this.getEditionURL(obj, forceUpdate), obj).$promise.error(onError).then(onSuccess);
             }
           }
         };
@@ -618,14 +788,22 @@ angular.module('datasourcejs', [])
           }
         };
 
-        this.postSilent = function(callback) {
-          this.post(callback, true);
+        this.postSilent = function(onSuccess, onError) {
+          this.post(onSuccess, onError, true);
+        }
+
+        this.updateActive = function(from) {
+          for (var key in from) {
+            if (from.hasOwnProperty(key) && this.active.hasOwnProperty(key)) {
+              this.active[key] = from[key];
+            }
+          }
         }
 
         /**
          * Insert or update based on the the datasource state
          */
-        this.post = function(callback, silent) {
+        this.post = function(onSuccess, onError, silent) {
 
           if (!silent && this.missingRequiredField())
             return;
@@ -653,23 +831,25 @@ angular.module('datasourcejs', [])
               this.handleAfterCallBack(this.onAfterCreate);
               this.onBackNomalState();
 
-              if (this.dependentData && !this.dependentLazyPost) {
-                $(this.dependentData).each(function() {
-                  this.storeDependentBuffer();
-                });
+              var func = function() {
+                if (onSuccess) {
+                  onSuccess(this.active);
+                }
+
+                if (this.events.create && hotData) {
+                  this.callDataSourceEvents('create', this.active);
+                  delete this.active.__sender;
+                }
+              }.bind(this);
+
+              if (this.dependentData && !this.dependentLazyPost && !this.batchPost) {
+                this.flushDependencies(func);
+              } else {
+                func();
               }
 
-              if (callback) {
-                callback(this.active);
-              }
 
-              if (this.events.create && hotData) {
-                this.events.create(this.active);
-              }
-
-              delete this.active.__sender;
-
-            }.bind(this));
+            }.bind(this), onError);
 
           } else if (this.editing) {
             // Make a new request to update the modified item
@@ -703,34 +883,35 @@ angular.module('datasourcejs', [])
                   }
 
                   this.active = currentRow;
-                  if (this.dependentLazyPost && !currentRow.__status) {
+                  if ((this.dependentLazyPost || this.batchPost) && !currentRow.__status) {
                     currentRow.__status = "updated";
                     currentRow.__original = lastActive;
                     currentRow.__tempId = Math.round(Math.random()*999999);
+                    this.hasMemoryData = true;
                   }
                   this.handleAfterCallBack(this.onAfterUpdate);
 
                   if (this.events.update && hotData) {
-                    this.events.update(this.active);
+                    this.callDataSourceEvents('update', this.active);
+                    delete this.active.__sender;
                   }
-
-                  delete this.active.__sender;
                 }
               }.bind(this));
 
               this.onBackNomalState();
 
-              if (this.dependentData && !this.dependentLazyPost) {
-                $(this.dependentData).each(function() {
-                  this.storeDependentBuffer();
-                });
-              }
+              var func = function() {
+                if (onSuccess) {
+                  onSuccess(this.active);
+                }
+              }.bind(this);
 
-              if (callback) {
-                callback(this.active);
+              if (this.dependentData && !this.dependentLazyPost && !this.batchPost) {
+                this.flushDependencies(func);
+              } else {
+                func();
               }
-
-            }.bind(this));
+            }.bind(this), onError);
           }
         };
 
@@ -764,8 +945,8 @@ angular.module('datasourcejs', [])
           return url + suffixPath;
         }
 
-        this.getEditionURL = function(forceOriginalKeys) {
-          var keyObj = this.getKeyValues(this.active.__original?this.active.__original:this.active, forceOriginalKeys);
+        this.getEditionURL = function(obj, forceOriginalKeys) {
+          var keyObj = this.getKeyValues(obj.__original?obj.__original:obj, forceOriginalKeys);
 
           var suffixPath = "";
           if (this.isOData()) {
@@ -796,7 +977,7 @@ angular.module('datasourcejs', [])
 
         this.refreshActive = function() {
           if (this.active) {
-            var url = this.getEditionURL();
+            var url = this.getEditionURL(this.active);
             var keyObj = this.getKeyValues(this.active);
 
             this.$promise = $http({
@@ -843,7 +1024,7 @@ angular.module('datasourcejs', [])
               }
 
               if (this.events.update) {
-                this.events.update(this.active);
+                this.callDataSourceEvents('update', this.active);
               }
 
             }.bind(this)).error(function(data, status, headers, config) {
@@ -976,7 +1157,7 @@ angular.module('datasourcejs', [])
               callback(this.active);
             }
             if (this.events.creating) {
-              this.events.creating(this.active);
+              this.callDataSourceEvents('creating', this.active);
             }
           }.bind(this));
         };
@@ -997,19 +1178,19 @@ angular.module('datasourcejs', [])
             callback(this.active);
           }
           if (this.events.editing) {
-            this.events.updating(this.active);
+            this.callDataSourceEvents('updating', this.active);
           }
         };
 
-        this.removeSilent = function(object, callback) {
-          this.remove(object, null, false, callback, true);
+        this.removeSilent = function(object, onSuccess, onError) {
+          this.remove(object, null, false, onSuccess, onError, true);
         }
 
         /**
          * Remove an object from this dataset by using the given id.
          * the objects
          */
-        this.remove = function(object, callback, forceDelete, afterDelete, silent) {
+        this.remove = function(object, callback, forceDelete, onSuccess, onError, silent) {
 
           this.busy = true;
 
@@ -1044,7 +1225,7 @@ angular.module('datasourcejs', [])
                 }
 
                 if (found) {
-                  if (this.dependentLazyPost) {
+                  if (this.dependentLazyPost || this.batchPost) {
                     if (this.data[i].__status != 'inserted') {
                       if (!this.postDeleteData) {
                         this.postDeleteData = [];
@@ -1054,6 +1235,7 @@ angular.module('datasourcejs', [])
                       deleted.__status = 'deleted';
                       deleted.__originalIdx = i;
                       this.postDeleteData.push(deleted);
+                      this.hasMemoryData = true;
                     }
                   }
                   // If it's the object we're loking for
@@ -1083,20 +1265,20 @@ angular.module('datasourcejs', [])
               }
               this.handleAfterCallBack(this.onAfterDelete);
 
-              if (afterDelete) {
-                afterDelete(object);
+              if (onSuccess) {
+                onSuccess(object);
               }
 
               if (this.events.delete && hotData) {
-                this.events.delete(object);
+                this.callDataSourceEvents('delete',object);
               }
             }.bind(this)
 
             if (this.handleBeforeCallBack(this.onBeforeDelete)) {
-              if (this.dependentLazyPost && !forceDelete) {
+              if ((this.dependentLazyPost || this.batchPost) && !forceDelete) {
                 callback();
               } else {
-                service.remove(this.getDeletionURL(object, forceDelete)).$promise.then(callback);
+                service.remove(this.getDeletionURL(object, forceDelete)).$promise.error(onError).then(callback);
               }
             }
           }.bind(this);
@@ -1330,7 +1512,7 @@ angular.module('datasourcejs', [])
         /**
          *  filter dataset by URL
          */
-        this.filter = function(url) {
+        this.filter = function(url, callback) {
           var oldoffset = this.offset;
           this.offset = 0;
           this.fetch({
@@ -1341,6 +1523,11 @@ angular.module('datasourcejs', [])
             },
             error: function(error) {
               this.offset = oldoffset;
+            },
+            success: function(data) {
+              if (callback) {
+                callback(data);
+              }
             }
           });
         };
@@ -1441,7 +1628,7 @@ angular.module('datasourcejs', [])
          */
         this.cleanup = function() {
           this.offset = 0;
-          this.rowsCount = 0;
+          this.rowsCount = -1;
           this.data.length = 0;
           this.cursor = -1;
           this.active = {};
@@ -1541,15 +1728,32 @@ angular.module('datasourcejs', [])
           return data;
         }
 
-        this.getParametersMap = function() {
+        this.getParametersMap = function(obj) {
           var map = {};
-          if (this.parameters && this.parameters.length > 0) {
-            var parts = this.parameters.split(";")
+
+          var parameters;
+
+          if (obj) {
+            parameters = this.parametersExpression;
+          } else {
+            parameters =  this.parameters;
+          }
+
+          if (parameters && parameters.length > 0) {
+            var parts = parameters.split(";")
             for (var i=0;i<parts.length;i++) {
               var part = parts[i];
               var binary = part.split("=");
               if (binary.length == 2) {
-                map[binary[0]] = binary[1]?this.normalizeValue(binary[1], true):null;
+                var value = binary[1];
+                if (obj) {
+                  if (binary[1].match(DEP_PATTERN)) {
+                    var g = DEP_PATTERN.exec(value);
+                    var field = g[1].replace(this.dependentLazyPost + ".active.", "");
+                    value = obj[field];
+                  }
+                }
+                map[binary[0]] = binary[1]?this.normalizeValue(value, true):null;
               }
             }
           }
@@ -1580,15 +1784,221 @@ angular.module('datasourcejs', [])
           this.events = events;
         }
 
+        this.addDataSourceEvents = function(events) {
+          for (var key in events) {
+            if (events.hasOwnProperty(key)) {
+              if (!this.events[key]) {
+                this.events[key] = [];
+              }
+
+              if (Object.prototype.toString.call(this.events[key]) !== '[object Array]') {
+                this.events[key] = [this.events[key]];
+              }
+
+              this.events[key].push(events[key]);
+            }
+          }
+        }
+
+        this.callDataSourceEvents = function(key, param) {
+          if (this.events) {
+            var event = this.events[key];
+            if (event) {
+              if (Object.prototype.toString.call(event) !== '[object Array]') {
+                event = [event];
+              }
+
+              var args = [];
+              for (var j = 1; j < arguments.length; j++) {
+                args.push(arguments[j]);
+              }
+
+              for (var i = 0; i < event.length; i++) {
+                event[i].apply(null, args);
+              }
+
+            }
+          }
+        }
+
+        this.storeInMemory = function(id) {
+          if (!this.memoryData) {
+            this.memoryData = {};
+          }
+
+          var memory = {
+            data: [],
+            cursor: this.cursor,
+            params: this.getParametersMap(),
+            rowCount: this.getRowsCount()
+          }
+
+          memory.data = deepCopy(this.data, memory.data);
+
+          this.memoryData[id] = memory;
+        }
+
+        this.restoreFromMemory = function(id) {
+          if (!this.memoryData) {
+            this.memoryData = {};
+          }
+
+          var mem = this.memoryData[id];
+
+          if (mem) {
+            this.cursor = mem.cursor;
+            this.rowsCount = mem.rowCount;
+          }
+
+          delete this.memoryData[id]
+
+          return deepCopy(mem.data);
+        }
+
+        this.hasPendingChanges = function() {
+          var changed = this.hasMemoryData;
+          if (this.children) {
+            $(this.children).each(function() {
+              changed = changed || this.hasPendingChanges();
+            });
+          }
+
+          return changed;
+        }
+
         /**
          *  Fetch all data from the server
          */
         this.fetch = function(properties, callbacksObj, isNextOrPrev) {
 
           var callbacks = callbacksObj || {};
-          
+
+
+          // Success Handler
+          var sucessHandler = function(data, headers, raw) {
+            var springVersion = false;
+            this.responseHeaders = headers || {};
+            var total = -1;
+
+            if (this.entity.indexOf('//') > -1 && this.entity.indexOf('://') < 0)
+              data = [];
+            if (!raw) {
+              if (data) {
+                if (Object.prototype.toString.call(data) !== '[object Array]') {
+                  if (data && data.links && Object.prototype.toString.call(data.content) === '[object Array]') {
+                    this.links = data.links;
+                    data = data.content;
+                    springVersion = true;
+                  }
+                  else if (this.isOData()) {
+                    total = parseInt(data.d.__count);
+                    data = data.d.results;
+                    this.normalizeData(data)
+                  }
+
+                  else {
+                    data = [data];
+                  }
+                }
+              } else {
+                data = [];
+              }
+            }
+
+            // Call the before fill callback
+            if (callbacks.beforeFill) callbacks.beforeFill.apply(this, this.data);
+
+            if (isNextOrPrev) {
+              // If prepend property was set.
+              // Add the new data before the old one
+              if (this.prepend) Array.prototype.unshift.apply(this.data, data);
+
+              // If append property was set.
+              // Add the new data after the old one
+              if (this.append) Array.prototype.push.apply(this.data, data);
+
+              // When neither  nor preppend was set
+              // Just replace the current data
+              if (!this.prepend && !this.append) {
+                Array.prototype.push.apply(this.data, data);
+                if (this.data.length > 0) {
+                  this.active = data[0];
+                  this.cursor = 0;
+                } else {
+                  this.active = {};
+                  this.cursor = -1;
+                }
+              }
+            } else {
+              this.cleanup();
+              if (total != -1) {
+                this.rowsCount = total;
+              }
+              Array.prototype.push.apply(this.data, data);
+              if (this.data.length > 0) {
+                this.active = data[0];
+                this.cursor = 0;
+              }
+            }
+
+            this.columns = [];
+            if (this.data.length > 0) {
+              for (var i = 0; i < this.data[0].length; i++) {
+                this.columns.push(this.getColumn(i));
+              }
+            }
+
+            if (callbacks.success) callbacks.success.call(this, data);
+
+            if (this.events.read) {
+              this.callDataSourceEvents('read', data);
+            }
+
+            this.hasMoreResults = (data.length >= this.rowsPerPage);
+
+            if (springVersion) {
+              this.hasMoreResults = this.getLink("next") != null;
+            }
+
+            /*
+             *  Register a watcher for data
+             *  if the autopost property was set
+             *  It means that any change on dataset items will
+             *  generate a new request on the server
+             */
+            if (this.autoPost) {
+              this.startAutoPost();
+            }
+
+            this.loaded = true;
+            this.loadedFinish = true;
+            this.handleAfterCallBack(this.onAfterFill);
+            var thisDatasourceName = this.name;
+            $('datasource').each(function(idx, elem) {
+              var dependentBy = null;
+              var dependent = eval(elem.getAttribute('name'));
+              if (elem.getAttribute('dependent-by') !== "" && elem.getAttribute('dependent-by') != null) {
+                try {
+                  dependentBy = JSON.parse(elem.getAttribute('dependent-by'));
+                } catch (ex) {
+                  dependentBy = eval(elem.getAttribute('dependent-by'));
+                }
+
+                if (dependentBy) {
+                  if (dependentBy.name == thisDatasourceName) {
+                    if (!dependent.filterURL)
+                      eval(dependent.name).fetch();
+                    //if has filter, the filter observer will be called
+                  }
+                } else {
+                  console.log('O dependente ' + elem.getAttribute('dependent-by') + ' do pai ' + thisDatasourceName + ' ainda não existe.')
+                }
+              }
+            });
+          }.bind(this);
+
           // Ignore any call if the datasource is busy (fetching another request)
-          if (this.busy) { 
+          if (this.busy) {
             if (callbacksObj.canceled) {
               callbacksObj.canceled();
             }
@@ -1612,6 +2022,7 @@ angular.module('datasourcejs', [])
           }
 
           var props = properties || {};
+          var callbacks = callbacksObj || {};
 
           // Adjust property parameters and the endpoint url
           props.params = props.params || {};
@@ -1711,6 +2122,29 @@ angular.module('datasourcejs', [])
             }
           }
 
+          var localSuccess;
+
+          if (this.hasMemoryData && filter) {
+            if (!this.memoryData) {
+              this.memoryData = {};
+            }
+
+            var id = filter;
+            var mem = this.memoryData[id];
+
+            if (mem) {
+              this.storeInMemory(this.lastFilter);
+              var data = this.restoreFromMemory(id);
+              this.lastFilter = filter;
+              sucessHandler(data, null, true);
+              return;
+            } else {
+              localSuccess = function() {
+                this.storeInMemory(this.lastFilter);
+              }.bind(this);
+            }
+          }
+
           // Stop auto post for awhile
           this.stopAutoPost();
 
@@ -1727,6 +2161,10 @@ angular.module('datasourcejs', [])
             params: props.params,
             headers: this.headers
           }).success(function(data, status, headers, config) {
+            if (localSuccess) {
+              localSuccess();
+            }
+            this.lastFilter = filter;
             this.busy = false;
             sucessHandler(data, headers())
           }.bind(this)).error(function(data, status, headers, config) {
@@ -1735,130 +2173,15 @@ angular.module('datasourcejs', [])
             if (callbacks.error) callbacks.error.call(this, data);
           }.bind(this));
 
-          // Success Handler
-          var sucessHandler = function(data, headers) {
-            var springVersion = false;
-            this.responseHeaders = headers || {};
-            var total = -1;
 
-            if (this.entity.indexOf('//') > -1 && this.entity.indexOf('://') < 0)
-              data = [];
-            if (data) {
-              if (Object.prototype.toString.call(data) !== '[object Array]') {
-                if (data && data.links && Object.prototype.toString.call(data.content) === '[object Array]') {
-                  this.links = data.links;
-                  data = data.content;
-                  springVersion = true;
-                }
-                else if (this.isOData()) {
-                  total = parseInt(data.d.__count);
-                  data = data.d.results;
-                  this.normalizeData(data)
-                }
-
-                else {
-                  data = [data];
-                }
-              }
-            } else {
-              data = [];
-            }
-
-            // Call the before fill callback
-            if (callbacks.beforeFill) callbacks.beforeFill.apply(this, this.data);
-
-            if (isNextOrPrev) {
-              // If prepend property was set.
-              // Add the new data before the old one
-              if (this.prepend) Array.prototype.unshift.apply(this.data, data);
-
-              // If append property was set.
-              // Add the new data after the old one
-              if (this.append) Array.prototype.push.apply(this.data, data);
-
-              // When neither  nor preppend was set
-              // Just replace the current data
-              if (!this.prepend && !this.append) {
-                Array.prototype.push.apply(this.data, data);
-                if (this.data.length > 0) {
-                  this.active = data[0];
-                  this.cursor = 0;
-                } else {
-                  this.active = {};
-                  this.cursor = -1;
-                }
-              }
-            } else {
-              this.cleanup();
-              if (total != -1) {
-                this.rowsCount = total;
-              }
-              Array.prototype.push.apply(this.data, data);
-              if (this.data.length > 0) {
-                this.active = data[0];
-                this.cursor = 0;
-              }
-            }
-
-            this.columns = [];
-            if (this.data.length > 0) {
-              for (var i = 0; i < this.data[0].length; i++) {
-                this.columns.push(this.getColumn(i));
-              }
-            }
-
-            if (callbacks.success) callbacks.success.call(this, data);
-
-            if (this.events.read) {
-              this.events.read(data);
-            }
-
-            this.hasMoreResults = (data.length >= this.rowsPerPage);
-
-            if (springVersion) {
-              this.hasMoreResults = this.getLink("next") != null;
-            }
-
-            /*
-             *  Register a watcher for data
-             *  if the autopost property was set
-             *  It means that any change on dataset items will
-             *  generate a new request on the server
-             */
-            if (this.autoPost) {
-              this.startAutoPost();
-            }
-
-            this.loaded = true;
-            this.loadedFinish = true;
-            this.handleAfterCallBack(this.onAfterFill);
-            var thisDatasourceName = this.name;
-            $('datasource').each(function(idx, elem) {
-              var dependentBy = null;
-              var dependent = eval(elem.getAttribute('name'));
-              if (elem.getAttribute('dependent-by') !== "" && elem.getAttribute('dependent-by') != null) {
-                try {
-                  dependentBy = JSON.parse(elem.getAttribute('dependent-by'));
-                } catch (ex) {
-                  dependentBy = eval(elem.getAttribute('dependent-by'));
-                }
-
-                if (dependentBy) {
-                  if (dependentBy.name == thisDatasourceName) {
-                    if (!dependent.filterURL)
-                      eval(dependent.name).fetch();
-                    //if has filter, the filter observer will be called
-                  }
-                } else {
-                  console.log('O dependente ' + elem.getAttribute('dependent-by') + ' do pai ' + thisDatasourceName + ' ainda não existe.')
-                }
-              }
-            });
-          }.bind(this);
         };
 
         this.getRowsCount = function() {
-          return this.rowsCount;
+          if ( this.rowsCount != -1) {
+            return this.rowsCount;
+          } else {
+            return this.data.length;
+          }
         }
 
         /**
@@ -1918,6 +2241,39 @@ angular.module('datasourcejs', [])
           for (var key in to) {
             if (from[key] == undefined)
               delete to[key];
+          }
+
+          return to;
+        };
+
+        var deepCopyArray = function(from, to) {
+          if (from === null || Object.prototype.toString.call(from) !== '[object Array]')
+            return from;
+
+          to = to || [];
+
+          for (var i=0;i<from.length;i++) {
+            to.push(deepCopy(from[i]));
+          }
+
+          return to;
+        }
+
+        var deepCopy = function(from, to) {
+          if (Object.prototype.toString.call(from) === '[object Array]') {
+            return deepCopyArray(from, to);
+          }
+
+          if (from === null || Object.prototype.toString.call(from) !== '[object Object]') {
+            return from;
+          }
+
+          to = to || {};
+
+          for (var key in from) {
+            if (from.hasOwnProperty(key)) {
+              to[key] = deepCopy(from[key]);
+            }
           }
 
           return to;
@@ -2009,7 +2365,7 @@ angular.module('datasourcejs', [])
             dts.entity = props.entity;
 
             if (window.dataSourceMap && window.dataSourceMap[dts.entity]) {
-              dts.entity = window.dataSourceMap[dts.entity].serviceUrlODATA;
+              dts.entity = window.dataSourceMap[dts.entity].serviceUrlODATA || window.dataSourceMap[dts.entity].serviceUrl;
             }
 
             if (app && app.config && app.config.datasourceApiVersion) {
@@ -2038,7 +2394,9 @@ angular.module('datasourcejs', [])
             dts.onAfterDelete = props.onAfterDelete;
             dts.dependentBy = props.dependentBy;
             dts.parameters = props.parameters;
+            dts.parametersExpression = props.parametersExpression;
             dts.checkRequired = props.checkRequired;
+            dts.batchPost = props.batchPost;
 
             if (props.dependentLazyPost && props.dependentLazyPost.length > 0) {
               dts.dependentLazyPost = props.dependentLazyPost;
@@ -2176,8 +2534,10 @@ angular.module('datasourcejs', [])
               defaultNotSpecifiedErrorMessage: $translate.instant('General.ErrorNotSpecified'),
               dependentBy: attrs.dependentBy,
               dependentLazyPost: attrs.dependentLazyPost, //TRM
+              batchPost: attrs.batchpost === "true", //TRM
               dependentLazyPostField: attrs.dependentLazyPostField, //TRM
               parameters: attrs.parameters,
+              parametersExpression: $(element).attr('parameters'),
               checkRequired: !attrs.hasOwnProperty('checkrequired') || attrs.checkrequired === "" || attrs.checkrequired === "true",
             }
 
@@ -2198,20 +2558,21 @@ angular.module('datasourcejs', [])
 
                 // Start a timeout
                 timeoutPromise = $timeout(function() {
-                  datasource.filter(value);
+                  if (datasource.events.overRideRefresh) {
+                    datasource.callDataSourceEvents('overRideRefresh', 'filter', value);
+                  } else {
+                    datasource.filter(value, function (data) {
+                      if (datasource.events.refresh) {
+                        datasource.callDataSourceEvents('refresh', data, 'filter');
+                      }
+                    });
+                  }
                   datasource.lastFilterParsed = value;
                 }, 100);
               } else {
                 $timeout(function() {
-                      firstLoad.filter = false;
-                    },
-                    {
-                      success : function (data) {
-                        if (datasource.events.refresh) {
-                          datasource.events.refresh(data, 'filter');
-                        }
-                      }
-                    });
+                  firstLoad.filter = false;
+                }, 0);
               }
             });
 
@@ -2221,15 +2582,19 @@ angular.module('datasourcejs', [])
 
                 $timeout.cancel(timeoutPromise);
                 timeoutPromise =$timeout(function() {
-                  datasource.fetch({
-                    params: {}
-                  }, {
-                    success : function (data) {
-                      if (datasource.events.refresh) {
-                        datasource.events.refresh(data, 'parameters');
+                  if (datasource.events.overRideRefresh) {
+                    datasource.callDataSourceEvents('overRideRefresh', 'parameters', datasource.parameters);
+                  } else {
+                    datasource.fetch({
+                      params: {}
+                    }, {
+                      success: function (data) {
+                        if (datasource.events.refresh) {
+                          datasource.callDataSourceEvents('refresh', data, 'parameters');
+                        }
                       }
-                    }
-                  });
+                    });
+                  }
                 }, 0);
 
               }
@@ -2244,17 +2609,21 @@ angular.module('datasourcejs', [])
                 if (datasource.enabled) {
                   $timeout.cancel(timeoutPromise);
                   timeoutPromise =$timeout(function () {
-                    datasource.fetch({
-                          params: {}
-                        },
-                        {
-                          success : function (data) {
-                            if (datasource.events.refresh) {
-                              datasource.events.refresh(data, 'enabled');
+                    if (datasource.events.overRideRefresh) {
+                      datasource.callDataSourceEvents('overRideRefresh', 'enabled', datasource.parameters);
+                    } else {
+                      datasource.fetch({
+                            params: {}
+                          },
+                          {
+                            success: function (data) {
+                              if (datasource.events.refresh) {
+                                datasource.callDataSourceEvents('refresh', data, 'enabled');
+                              }
                             }
                           }
-                        }
-                    );
+                      );
+                    }
                   }, 200);
                 }
               }
@@ -2264,7 +2633,7 @@ angular.module('datasourcejs', [])
               datasource.entity = value;
 
               if (window.dataSourceMap && window.dataSourceMap[datasource.entity]) {
-                datasource.entity = window.dataSourceMap[datasource.entity].serviceUrlODATA;
+                datasource.entity = window.dataSourceMap[datasource.entity].serviceUrlODATA || window.dataSourceMap[datasource.entity].serviceUrl;;
               }
 
               if (!firstLoad.entity) {
@@ -2279,7 +2648,7 @@ angular.module('datasourcejs', [])
                       {
                         success : function (data) {
                           if (datasource.events.refresh) {
-                            datasource.events.refresh(data, 'entity');
+                            datasource.callDataSourceEvents('refresh', data, 'entity');
                           }
                         }
                       }
